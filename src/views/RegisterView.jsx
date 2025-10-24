@@ -55,7 +55,7 @@ const RegisterView = ({ setActiveView }) => {
         <Card className="max-w-md mx-auto">
             <CardHeader>
                 <CardTitle>Register</CardTitle>
-                <CardDescription>Create your FoodBridge account</CardDescription>
+                <CardDescription>Create your Smart Food Connect account</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>

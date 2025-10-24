@@ -11,7 +11,7 @@ import {
     Label,
 } from '../components/UIComponents';
 
-const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {  // Add setCartItems to props
+const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => { 
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -62,7 +62,7 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {  // Add
         <Card className="max-w-md mx-auto">
             <CardHeader>
                 <CardTitle>Login</CardTitle>
-                <CardDescription>Access your FoodBridge account</CardDescription>
+                <CardDescription>Access your Smart Food Connect account</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>

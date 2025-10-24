@@ -1,10 +1,10 @@
 import { Button } from "./UIComponents";
-import FoodBridgeLogo from "./FoodBridgeLogo";
+import Logo from "./Logo";
 
 const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) => (
     <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <FoodBridgeLogo onClick={() => setActiveView("home")} />
+            <Logo onClick={() => setActiveView("home")} />
             <nav className="flex items-center space-x-4">
                 {currentUser ? (
                     <>
@@ -17,9 +17,9 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                         <Button onClick={() => setActiveView("register")}>Sign Up</Button>
                     </>
                 )}
-                <Button variant="outline" onClick={() => setActiveView("cart")}>
+                {/* <Button variant="outline" onClick={() => setActiveView("cart")}>
                     Cart ({cartItemsCount})
-                </Button>
+                </Button> */}
                 {
                     currentUser && currentUser.userType === "shopkeeper"? (
                         <>

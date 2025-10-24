@@ -1,4 +1,4 @@
-const FoodBridgeLogo = ({ onClick }) => (
+const Logo = ({ onClick }) => (
     <svg width="200" height="50" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg" onClick={onClick} style={{ cursor: 'pointer' }}>
         <style>
             {`
@@ -14,4 +14,4 @@ const FoodBridgeLogo = ({ onClick }) => (
     </svg>
 );
 
-export default FoodBridgeLogo;
+export default Logo;
