@@ -10,7 +10,10 @@ export default {
     es2021: true,
     node: true,
   },
-  globals: globals.browser,
+  globals: {
+    ...globals.browser,
+    ...globals.node, // add Node globals
+  },
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
