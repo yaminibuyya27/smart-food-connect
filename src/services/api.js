@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = '';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const api = {
     register: async (userData) => {
         try {
-            const response = await axios.post(`${API_URL}/users/register`, userData);
+            const response = await axios.post(`${API_URL}/api/users/register`, userData);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Registration failed' };
@@ -14,7 +14,7 @@ export const api = {
 
     login: async (credentials) => {
         try {
-            const response = await axios.post(`${API_URL}/users/login`, credentials);
+            const response = await axios.post(`${API_URL}/api/users/login`, credentials);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Login failed' };
@@ -23,7 +23,7 @@ export const api = {
     
     getCart: async (userId) => {
         try {
-            const response = await axios.get(`${API_URL}/carts/${userId}`);
+            const response = await axios.get(`${API_URL}/api/carts/${userId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to get cart' };
@@ -32,7 +32,7 @@ export const api = {
 
     updateCart: async (userId, items) => {
         try {
-            const response = await axios.put(`${API_URL}/carts/${userId}`, { items });
+            const response = await axios.put(`${API_URL}/api/carts/${userId}`, { items });
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to update cart' };
@@ -41,7 +41,7 @@ export const api = {
 
     addToCart: async (userId, item) => {
         try {
-            const response = await axios.post(`${API_URL}/carts/${userId}/items`, item);
+            const response = await axios.post(`${API_URL}/api/carts/${userId}/items`, item);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to add item to cart' };
@@ -50,7 +50,7 @@ export const api = {
 
     clearCart: async (userId) => {
         try {
-            const response = await axios.delete(`${API_URL}/carts/${userId}`);
+            const response = await axios.delete(`${API_URL}/api/carts/${userId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to clear cart' };
@@ -59,7 +59,7 @@ export const api = {
 
     getInventory: async () => {
         try {
-            const response = await axios.get(`${API_URL}/inventory`);
+            const response = await axios.get(`${API_URL}/api/inventory`);
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to fetch inventory' };
