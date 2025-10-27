@@ -33,7 +33,7 @@ app.use('/api/inventory', inventoryRoute);
 
  
  // test route
- app.get('/', (req, res) => {
+ app.get('/api', (req, res) => {
     res.send('Welcome to Smart Food Connect API!');
  });
  
