@@ -38,10 +38,13 @@ app.use('/api/inventory', inventoryRoute);
  });
  
  
-// eslint-disable-next-line no-undef
- const PORT = process.env.PORT || 3001;
- 
- app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Only listen when running locally
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+export default app;
 
