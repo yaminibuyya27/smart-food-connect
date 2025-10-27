@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        enum: ['individual', 'shopkeeper', 'charity'],
+        enum: ['shopper', 'retailer', 'charity'],
         required: true
     },
     cart: {
