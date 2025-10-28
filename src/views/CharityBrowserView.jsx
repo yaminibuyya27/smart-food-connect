@@ -121,7 +121,8 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
                   </CardContent>
                   <CardFooter>
                     {item.available ? (
-                      <Button onClick={() => addToCart(item)} className="w-full">
+                      <Button onClick={() => addToCart(item)} 
+                      className="w-full inline-flex flex-row items-center justify-center gap-2">
                         <ShoppingBag className="mr-2 h-4 w-4" />
                         Add to Cart
                       </Button>
@@ -136,7 +137,7 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
                           handleNotification(CurrentUser, item)}
                         }
                         disabled={notifications.includes(item.id)}
-                        className="w-full"
+                        className="w-full inline-flex flex-row items-center justify-center gap-2"
                       >
                         <Bell className="mr-2 h-4 w-4" />
                         {notifications.includes(item.id) ? "Notified" : "Notify When Available"}

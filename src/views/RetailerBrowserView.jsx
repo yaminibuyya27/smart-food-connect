@@ -8,9 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from '../components/UIComponents';
-import { ShoppingBag, Bell } from 'lucide-react';
 import { api } from "../services/api";
-import { handleNotification } from "../components/notifications";
+import { Pencil } from 'lucide-react';
 
 const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications }) => {
   const [foodItems, setFoodItems] = useState([]);
@@ -131,7 +130,8 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
                   <p className="text-sm">Available for: {item.type}</p>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={() => editItem(item)} className="w-full">
+                    <Button onClick={() => editItem(item)} className="w-full inline-flex flex-row items-center justify-center gap-2">
+                      <Pencil className="mr-2 h-4 w-4" />
                       Edit
                     </Button>
                 </CardFooter>

@@ -123,8 +123,8 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                 </CardContent>
                 <CardFooter>
                   {item.available ? (
-                    <Button onClick={() => addToCart(item)} className="w-full">
-                      <ShoppingBag className="mr-2 h-4 w-4" />
+                    <Button onClick={() => addToCart(item)} className="w-full inline-flex flex-row items-center justify-center gap-2">
+                      <ShoppingBag className="h-4 w-4" />
                       Add to Cart
                     </Button>
                   ) : (
@@ -138,7 +138,7 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                           handleNotification(CurrentUser, item)}
                       }
                       disabled={currentUser == null}
-                      className="w-full"
+                      className="w-full inline-flex flex-row items-center justify-center gap-2"
                     >
                       <Bell className="mr-2 h-4 w-4" />
                       {notifications.includes(item.id) ? "Notified" : "Notify When Available"}
