@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-    Button,
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from '../components/UIComponents';
-import { ShoppingBag, Bell } from 'lucide-react';
+import InventoryCard from '../components/InventoryCard';
 import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
 
@@ -69,6 +67,7 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
   
         <CardContent>
           <div className="space-y-4">
+            {/* Search Input */}
             <div>
               <input
                 type="text"
@@ -78,6 +77,8 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
                 className="w-full p-2 border rounded bg-white"
               />
             </div>
+
+            {/* Category Filter */}
             <div>
               <label htmlFor="category" className="block mb-2 font-bold">
                 Filter by Category:
@@ -95,58 +96,32 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
               </select>
             </div>
   
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Inventory Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredFoodItems.map((item) => (
-                <Card key={item.id} className="flex flex-col">
-                  <CardHeader>
-                    <div className="w-full h-64 overflow-hidden bg-gray-50 rounded-t">
-                      <img
-                        src={`${API_URL}/api/inventory/image/${item.id}`}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src = '/placeholder-food.png';
-                          e.target.onerror = null;
-                        }}
-                      />
-                    </div>
-                    <CardTitle className="text-lg">{item.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                    <p className="font-bold text-lg mb-1">${item.price}</p>
-                    <p className="text-sm mb-1">Best before: {new Date(item.expiry).toLocaleDateString()}</p>
-                    <p className="text-sm mb-1">Status: {item.available ? "Available" : "Out of Stock"}</p>
-                    <p className="text-sm">Quantity: {item.quantity}</p>
-                  </CardContent>
-                  <CardFooter>
-                    {item.available ? (
-                      <Button onClick={() => addToCart(item)} 
-                      className="w-full inline-flex flex-row items-center justify-center gap-2">
-                        <ShoppingBag className="mr-2 h-4 w-4" />
-                        Add to Cart
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          if(CurrentUser === null) {
-                            alert("Please login before adding items to the cart");
-                            setActiveView('login');
-                          }
-                          handleNotification(CurrentUser, item)}
-                        }
-                        disabled={notifications.includes(item.id)}
-                        className="w-full inline-flex flex-row items-center justify-center gap-2"
-                      >
-                        <Bell className="mr-2 h-4 w-4" />
-                        {notifications.includes(item.id) ? "Notified" : "Notify When Available"}
-                      </Button>
-                    )}
-                  </CardFooter>
-                </Card>
+                <InventoryCard
+                  key={item.id}
+                  item={item}
+                  apiUrl={API_URL}
+                  currentUser={CurrentUser}
+                  notifications={notifications}
+                  onAddToCart={addToCart}
+                  onNotify={handleNotification}
+                  onLoginRequired={() => {
+                    alert("Please login before adding items to the cart");
+                    setActiveView('login');
+                  }}
+                />
               ))}
             </div>
+
+            {/* Empty State */}
+            {filteredFoodItems.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No donations available matching your criteria</p>
+                <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or check back later</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

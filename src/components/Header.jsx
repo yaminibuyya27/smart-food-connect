@@ -37,7 +37,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                 {
                     currentUser && currentUser.userType === "retailer" ? (
                         <>
-                            <Button onClick={() => setActiveView("inventory")}>Manage Inventory</Button>
+                            <Button onClick={() => setActiveView("inventory")}>Add Inventory</Button>
                         </>
                     ) : (<></>)
                 }

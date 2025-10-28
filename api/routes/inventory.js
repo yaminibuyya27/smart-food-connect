@@ -51,6 +51,46 @@ router.post('/', upload.single('image'), async (req, res) => {
     }
 });
 
+router.put('/:id', upload.single('image'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type } = req.body;
+        
+        const updateData = {
+            product,
+            quantity: Number(quantity),
+            variant,
+            additionalDetails,
+            price: Number(price),
+            available: available === 'true' || available === true,
+            expiryDate,
+            type
+        };
+
+        if (req.file) {
+            updateData.image = {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            };
+        }
+
+        const updatedItem = await InventoryModel.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedItem) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        res.status(200).json({ message: 'Item updated successfully', item: updatedItem });
+    } catch (error) {
+        console.error('Error updating inventory item:', error);
+        res.status(500).json({ error: 'Failed to update item' });
+    }
+});
+
 router.get('/image/:id', async (req, res) => {
     try {
         const item = await InventoryModel.findById(req.params.id);

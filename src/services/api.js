@@ -75,6 +75,15 @@ export const api = {
         }
     },
 
+    updateInventoryItem: async (id, formData) => {
+        try {
+            const response = await axios.put(`${API_URL}/api/inventory/${id}`, formData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to update inventory item' };
+        }
+    },
+
     createNotification: async (notificationData) => {
         try {
             const response = await axios.post(`${API_URL}/api/notification`, notificationData);

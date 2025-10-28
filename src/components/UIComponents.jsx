@@ -47,3 +47,18 @@ export const SelectTrigger = ({ children }) => <div>{children}</div>;
 export const SelectValue = ({ placeholder }) => <span>{placeholder}</span>;
 export const SelectContent = ({ children }) => <>{children}</>;
 export const SelectItem = ({ value, children }) => <option value={value}>{children}</option>;
+
+export const Badge = ({ children, className, variant }) => {
+  const variantStyles = {
+    default: 'bg-blue-100 text-blue-800',
+    destructive: 'bg-red-100 text-red-800',
+    warning: 'bg-orange-100 text-orange-800',
+    success: 'bg-green-100 text-green-800',
+  };
+  
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantStyles[variant] || variantStyles.default} ${className || ''}`}>
+      {children}
+    </span>
+  );
+};

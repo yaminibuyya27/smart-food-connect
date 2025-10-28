@@ -1,0 +1,175 @@
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Badge } from './UIComponents';
+import { ShoppingBag, Bell, Calendar, Package } from 'lucide-react';
+
+const InventoryCard = ({
+  item,
+  apiUrl,
+  currentUser,
+  notifications = [],
+  onAddToCart,
+  onNotify,
+  onLoginRequired,
+  renderAction 
+}) => {
+  const isExpiringSoon = (expiryDate) => {
+    const daysUntilExpiry = Math.ceil((new Date(expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
+    return daysUntilExpiry <= 3 && daysUntilExpiry > 0;
+  };
+
+  const isExpired = (expiryDate) => {
+    return new Date(expiryDate) < new Date();
+  };
+
+  const formatExpiryDate = (expiryDate) => {
+    const date = new Date(expiryDate);
+    const today = new Date();
+    const diffTime = date.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    if (diffDays < 0) {
+      return `${formattedDate} (expired)`;
+    } else if (diffDays === 0) {
+      return `${formattedDate} (today)`;
+    } else if (diffDays === 1) {
+      return `${formattedDate} (tomorrow)`;
+    } else if (diffDays <= 7) {
+      return `${formattedDate} (in ${diffDays} days)`;
+    } else if (diffDays <= 30) {
+      const weeks = Math.floor(diffDays / 7);
+      return `${formattedDate} (in ${weeks} ${weeks === 1 ? 'week' : 'weeks'})`;
+    } else {
+      return formattedDate;
+    }
+  };
+
+  const handleNotifyClick = () => {
+    if (currentUser === null) {
+      if (onLoginRequired) {
+        onLoginRequired();
+      } else {
+        alert("Please login before adding items to the cart");
+      }
+    } else {
+      onNotify(currentUser, item);
+    }
+  };
+
+  const expiryStatus = isExpired(item.expiry) 
+    ? 'expired' 
+    : isExpiringSoon(item.expiry) 
+    ? 'expiring-soon' 
+    : 'fresh';
+
+  return (
+    <Card className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
+      <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        <img
+          src={`${apiUrl}/api/inventory/image/${item.id}`}
+          alt={item.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            e.target.src = '/placeholder-food.png';
+            e.target.onerror = null;
+          }}
+        />
+
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
+          {!item.available && (
+            <Badge variant="destructive" className="shadow-md">
+              Out of Stock
+            </Badge>
+          )}
+          {expiryStatus === 'expiring-soon' && (
+            <Badge variant="warning" className="shadow-md">
+              Expiring Soon
+            </Badge>
+          )}
+          {expiryStatus === 'expired' && (
+            <Badge variant="destructive" className="shadow-md">
+              Expired
+            </Badge>
+          )}
+        </div>
+
+      </div>
+
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="text-xl font-semibold line-clamp-2 flex-1">
+            {item.name}
+          </CardTitle>
+          <div className="flex-shrink-0">
+            <span className="text-2xl font-bold text-green-600">
+              ${item.price}
+            </span>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-grow space-y-3 pt-0">
+        <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">
+          {item.description}
+        </p>
+
+        <div className="space-y-2 pt-2">
+          {item.type && (
+            <div className="flex items-center gap-2 text-sm">
+              <Badge variant="default" className="text-xs">
+                Available for: {item.type}
+              </Badge>
+            </div>
+          )}
+          
+          <div className="flex items-center gap-2 text-sm">
+            <Calendar className="h-4 w-4 text-gray-500" />
+            <span className="text-gray-700">
+              Best before: <span className="font-medium">{formatExpiryDate(item.expiry)}</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm">
+            <Package className="h-4 w-4 text-gray-500" />
+            <span className="text-gray-700">
+              Quantity: <span className="font-medium">{item.quantity}</span>
+            </span>
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="pt-4 border-t">
+        {renderAction ? (
+          renderAction(item)
+        ) : item.available ? (
+          <Button 
+            onClick={() => onAddToCart(item)} 
+            className="w-full inline-flex items-center justify-center gap-2"
+            size="lg"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Add to Cart
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={handleNotifyClick}
+            disabled={notifications.includes(item.id)}
+            className="w-full inline-flex items-center justify-center gap-2"
+            size="lg"
+          >
+            <Bell className="h-4 w-4" />
+            {notifications.includes(item.id) ? "You'll be notified" : "Notify When Available"}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default InventoryCard;
