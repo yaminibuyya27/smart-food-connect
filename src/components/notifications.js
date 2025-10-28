@@ -5,7 +5,7 @@ export const handleNotification = async (currentUser, item) => {
         alert("Please login before sending the notification");
         return;
     }
-    
+
     const payload = {
         userId: currentUser._id,
         subject: "Smart Food Connect Notification",
@@ -14,6 +14,7 @@ export const handleNotification = async (currentUser, item) => {
       }
       try {
         await api.createNotification(payload);
+        alert("Notification has been sent")
         // addNotification(item.id);
       } catch (error) {
         console.error("Failed to set notification:", error);
