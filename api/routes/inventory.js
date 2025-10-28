@@ -9,7 +9,7 @@ const upload = multer({ storage: storage });
 
 router.post('/', upload.single('image'), async (req, res) => {
     try {
-        const { product, quantity, variant, additionalDetails, price, available, expiryDate } = req.body;
+        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type } = req.body;
         
         const newItem = {
             product,
@@ -22,7 +22,8 @@ router.post('/', upload.single('image'), async (req, res) => {
             image: req.file ? {
                 data: req.file.buffer,
                 contentType: req.file.mimetype
-            } : undefined
+            } : undefined,
+            type
         };
 
         const savedItem = await InventoryModel.findOneAndUpdate(
@@ -30,7 +31,8 @@ router.post('/', upload.single('image'), async (req, res) => {
                 'product': product,
                 'variant': variant,
                 'price': price,
-                'expiryDate': expiryDate
+                'expiryDate': expiryDate,
+                'type': type
             }, 
             {
                 $inc: { quantity: Number(quantity) },

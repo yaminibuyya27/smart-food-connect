@@ -12,6 +12,7 @@ const InventoryView = () => {
    const [loading, setLoading] = useState(false);
    const [image, setImage] = useState(null);
    const [previewUrl, setPreviewUrl] = useState('');
+   const [type, setType] = useState('shopper');
 
    const handleImageChange = (e) => {
        const file = e.target.files[0];
@@ -33,7 +34,8 @@ const InventoryView = () => {
         additionalDetails,
         price: Number(price),
         available: Boolean(available),
-        expiryDate
+        expiryDate,
+        type
     };
 
     try {
@@ -61,6 +63,7 @@ const InventoryView = () => {
         setExpiryDate('');
         setImage(null);
         setPreviewUrl('');
+        setType('shopper');
     } catch (error) {
         console.error('Error adding inventory item:', error);
         alert(error.message);
@@ -123,6 +126,18 @@ const InventoryView = () => {
                        placeholder="e.g., 10.99" 
                        required 
                    />
+               </div>
+               <div>
+                   <label className="block text-sm font-medium mb-1">Inventory Type</label>
+                   <select
+                       className="w-full p-2 border rounded-md"
+                       value={type}
+                       onChange={(e) => setType(e.target.value)}
+                       required
+                   >
+                       <option value="shopper">Shopper</option>
+                       <option value="charity">Charity</option>
+                   </select>
                </div>
                <div>
                    <label className="block text-sm font-medium mb-1">Status</label>

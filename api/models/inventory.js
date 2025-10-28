@@ -9,6 +9,12 @@ const inventorySchema = new mongoose.Schema({
     price: { type: Number, required: true },
     available: { type: Boolean, default: true },
     expiryDate: { type: Date, required: true },
+    type: { 
+        type: String, 
+        enum: ['shopper', 'charity'],
+        default: 'shopper',
+        required: true
+    },
     image: {
         data: Buffer,
         contentType: String

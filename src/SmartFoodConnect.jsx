@@ -9,6 +9,7 @@ import CheckoutView from './views/CheckoutView.jsx';
 import HomeView from './views/HomeView.jsx';
 import CartView from './views/CartView.jsx';
 import CharityBrowseView from './views/CharityBrowserView.jsx';
+import RetailerBrowserView from './views/RetailerBrowserView.jsx';
 
 
 const SmartFoodConnect = () => {
@@ -116,9 +117,11 @@ const SmartFoodConnect = () => {
             case "register":
                 return <RegisterView setActiveView={setActiveView} />;
             case "charityBrowse":
-                return <CharityBrowseView addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
+                return <CharityBrowseView addToCart={addToCart} setActiveView={setActiveView} addNotification={addNotification} notifications={notifications} />;
             case "userBrowse":
-                return <UserBrowseView currentUser={currentUser} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
+                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
+            case "retailerBrowse":
+                return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
             case "cart":
                 return <CartView items={cartItems} setActiveView={setActiveView} removeFromCart={removeFromCart} clearCart={clearCart} loading={loading} />;
             case "inventory": 

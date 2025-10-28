@@ -12,7 +12,7 @@ import { ShoppingBag, Bell } from 'lucide-react';
 import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
 
-const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notifications }) => {
+const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotification, notifications }) => {
     const [foodItems, setFoodItems] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [categories, setCategories] = useState([]);
@@ -25,8 +25,7 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
   
     const fetchFoodItems = async () => {
       try {
-        const response = await api.getInventory();
-        const data = await response.json();
+        const data = await api.getInventory();
         const items = data.map(item => ({
           id: item._id,
           name: item.product,
@@ -35,10 +34,11 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
           available: item.available,
           category: item.variant,
           description: item.additionalDetails,
-          quantity: item.quantity
+          quantity: item.quantity,
+          type: item.type
         }));
         setFoodItems(items);
-        const uniqueCategories = [...new Set(items.map(item => item.category))];
+        const uniqueCategories = [...new Set(items.map(item => item.category))]; 
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Error fetching food items:', error);
@@ -51,13 +51,14 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
         const today = new Date();
         const diffTime = expiryDate.getTime() - today.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays >= 1 && diffDays <= 3;
+        return diffDays >= 3;
       })
       .filter(item => !selectedCategory || item.category === selectedCategory)
       .filter(item => 
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      )
+      .filter(item => item.type === 'charity');
   
     return (
       <Card className="w-full">
@@ -127,7 +128,13 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
                     ) : (
                       <Button
                         variant="outline"
-                        onClick={() => handleNotification(CurrentUser, item)}
+                        onClick={() => {
+                          if(CurrentUser === null) {
+                            alert("Please login before adding items to the cart");
+                            setActiveView('login');
+                          }
+                          handleNotification(CurrentUser, item)}
+                        }
                         disabled={notifications.includes(item.id)}
                         className="w-full"
                       >

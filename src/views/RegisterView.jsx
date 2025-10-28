@@ -33,7 +33,6 @@ const RegisterView = ({ setActiveView }) => {
         e.preventDefault();
         setError('');
         setLoading(true);
-        console.log(formData);
         // Validation
         if (!formData.name || !formData.email || !formData.password) {
             setError('Please fill in all fields');

@@ -12,7 +12,7 @@ import { ShoppingBag, Bell } from 'lucide-react';
 import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
 
-const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications }) => {
+const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -59,7 +59,15 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description?.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .filter(item => item.type === 'shopper')
+
+    const editItem = (item) => {
+      if(currentUser == null) {
+        alert("Please login before editing the item");
+        setActiveView("login");
+        return;
+      }
+      // Code to edit the item
+    }
     
 
   return (
@@ -120,30 +128,12 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                   <p className="text-sm mb-1">Best before: {new Date(item.expiry).toLocaleDateString()}</p>
                   <p className="text-sm mb-1">Status: {item.available ? "Available" : "Out of Stock"}</p>
                   <p className="text-sm">Quantity: {item.quantity}</p>
+                  <p className="text-sm">Available for: {item.type}</p>
                 </CardContent>
                 <CardFooter>
-                  {item.available ? (
-                    <Button onClick={() => addToCart(item)} className="w-full">
-                      <ShoppingBag className="mr-2 h-4 w-4" />
-                      Add to Cart
+                    <Button onClick={() => editItem(item)} className="w-full">
+                      Edit
                     </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        if(CurrentUser === null) {
-                            alert("Please login before adding items to the cart");
-                            setActiveView('login');
-                          }
-                          handleNotification(CurrentUser, item)}
-                      }
-                      disabled={currentUser == null}
-                      className="w-full"
-                    >
-                      <Bell className="mr-2 h-4 w-4" />
-                      {notifications.includes(item.id) ? "Notified" : "Notify When Available"}
-                    </Button>
-                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -154,4 +144,4 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
   );
 };
 
-export default UserBrowseView;
+export default RetailerBrowserView;

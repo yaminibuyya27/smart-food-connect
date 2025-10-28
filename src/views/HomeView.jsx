@@ -23,7 +23,7 @@ const HomeView = ({ setActiveView }) => (
                     </CardHeader>
                     <CardContent>List your surplus food items</CardContent>
                     <CardFooter>
-                        <Button onClick={() => setActiveView("userBrowse")}>Get Started</Button>
+                        <Button onClick={() => setActiveView("retailerBrowse")}>Get Started</Button>
                     </CardFooter>
                 </Card>
                 <Card>

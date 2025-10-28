@@ -3,6 +3,7 @@ import { api } from "../services/api";
 export const handleNotification = async (currentUser, item) => {
     if(currentUser == null) {
         alert("Please login before sending the notification");
+        setActiveView("login");
         return;
     }
 
