@@ -19,7 +19,7 @@ const HomeView = ({ setActiveView }) => (
             <div className="grid grid-cols-3 gap-4 mt-4">
                 <Card>
                     <CardHeader>
-                        <CardTitle>For Shopkeepers</CardTitle>
+                        <CardTitle>For Retailers</CardTitle>
                     </CardHeader>
                     <CardContent>List your surplus food items</CardContent>
                     <CardFooter>
@@ -28,7 +28,7 @@ const HomeView = ({ setActiveView }) => (
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>For Individuals</CardTitle>
+                        <CardTitle>For Shoppers</CardTitle>
                     </CardHeader>
                     <CardContent>Find discounted food near you</CardContent>
                     <CardFooter>

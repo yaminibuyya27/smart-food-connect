@@ -21,7 +21,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                     Cart ({cartItemsCount})
                 </Button> */}
                 {
-                    currentUser && currentUser.userType === "shopkeeper"? (
+                    currentUser && currentUser.userType === "retailer"? (
                         <>
                             <Button onClick={() => setActiveView("inventory")}>Manage Inventory</Button>
                         </>

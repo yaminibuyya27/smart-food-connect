@@ -95,12 +95,12 @@ const RegisterView = ({ setActiveView }) => {
                                 //onChange={(event) => setFormData(formData => ({...formData, userType: event.target.value}))}
                             >
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="individual" id="individual" name ="userType" handleOptionChange={handleOptionChange} />
-                                    <Label htmlFor="individual">Individual</Label>
+                                    <RadioGroupItem value="shopper" id="shopper" name ="userType" handleOptionChange={handleOptionChange} />
+                                    <Label htmlFor="shopper">Shopper</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="shopkeeper" id="shopkeeper" name ="userType" handleOptionChange={handleOptionChange}/>
-                                    <Label htmlFor="shopkeeper">Shopkeeper</Label>
+                                    <RadioGroupItem value="retailer" id="retailer" name ="userType" handleOptionChange={handleOptionChange}/>
+                                    <Label htmlFor="retailer">Retailer</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="charity" id="charity" name ="userType" handleOptionChange={handleOptionChange}/>
