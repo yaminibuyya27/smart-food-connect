@@ -4,7 +4,21 @@ import Logo from "./Logo";
 const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) => (
     <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Logo onClick={() => setActiveView("home")} />
+            <Logo onClick={() => {
+                if (currentUser === null) {
+                    setActiveView("home");
+                }
+                else if (currentUser.userType === 'shopper') {
+                    setActiveView("userBrowse");
+                }
+                else if (currentUser.userType === 'retailer') {
+                    setActiveView("retailerBrowse");
+                }
+                else if (currentUser.userType === 'charity') {
+                    setActiveView("charityBrowse");
+                }
+            }}
+            />
             <nav className="flex items-center space-x-4">
                 {currentUser ? (
                     <>
@@ -21,11 +35,11 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                     Cart ({cartItemsCount})
                 </Button> */}
                 {
-                    currentUser && currentUser.userType === "retailer"? (
+                    currentUser && currentUser.userType === "retailer" ? (
                         <>
                             <Button onClick={() => setActiveView("inventory")}>Manage Inventory</Button>
                         </>
-                    ) : ( <></>)
+                    ) : (<></>)
                 }
             </nav>
         </div>

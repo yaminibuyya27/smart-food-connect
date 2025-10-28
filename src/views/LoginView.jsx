@@ -45,8 +45,17 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                 const cartResponse = await api.getCart(response.user._id);
                 setCartItems(cartResponse.items || []);
                 localStorage.setItem('cartItems', JSON.stringify(cartResponse.items || []));
+                if(response.user.userType === 'shopper') {
+                    setActiveView("userBrowse");
+                }
 
-                setActiveView("home");
+                else if(response.user.userType === 'retailer') {
+                    setActiveView("retailerBrowse");
+                }
+                else if(response.user.userType === 'charity') {
+                    setActiveView("charityBrowse");
+                }
+
             } else {
                 throw new Error('Invalid response from server');
             }
