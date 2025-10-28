@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../services/api';
 
 const InventoryView = () => {
    const [product, setProduct] = useState('');
@@ -46,16 +47,8 @@ const InventoryView = () => {
             formData.append('image', image);
         }
 
-        const response = await fetch('http://localhost:3001/api/inventory', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to add item');
-        }
-
+        await api.createInventory(formData);
+        setLoading(false);
         alert('Inventory item added successfully');
         
         // Reset form

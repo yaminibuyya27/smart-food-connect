@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from './services/api';
-import InventoryView from './InventoryView.jsx';
+import InventoryView from './views/InventoryView.jsx';
 import Header from './components/Header.jsx';
 import LoginView from './views/LoginView.jsx';
 import RegisterView from './views/RegisterView.jsx';

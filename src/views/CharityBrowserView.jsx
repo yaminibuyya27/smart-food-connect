@@ -16,6 +16,7 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
     const [selectedCategory, setSelectedCategory] = useState("");
     const [categories, setCategories] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const API_URL = import.meta.env.VITE_API_URL || '';
   
     useEffect(() => {
       fetchFoodItems();
@@ -118,7 +119,7 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
                   <CardHeader>
                     <div className="w-full h-64 overflow-hidden bg-gray-50 rounded-t">
                       <img
-                        src={`http://localhost:3001/api/inventory/image/${item.id}`}
+                        src={`${API_URL}/api/inventory/image/${item.id}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
