@@ -33,15 +33,18 @@ app.use('/api/inventory', inventoryRoute);
 
  
  // test route
- app.get('/', (req, res) => {
+ app.get('/api', (req, res) => {
     res.send('Welcome to Smart Food Connect API!');
  });
  
  
-// eslint-disable-next-line no-undef
- const PORT = process.env.PORT || 3001;
- 
- app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Only listen when running locally
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+export default app;
 
