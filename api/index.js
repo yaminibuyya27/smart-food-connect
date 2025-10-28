@@ -9,6 +9,7 @@ import itemsRoute from './routes/items.js';
 import donationsRoute from './routes/donations.js';
 import cartsRoute from './routes/carts.js';
 import inventoryRoute from './routes/inventory.js';
+import notificationRoute from './routes/notification.js';
 import connectDB from './config/db.js';
 
 
@@ -30,6 +31,7 @@ app.use('/api/items', itemsRoute);
 app.use('/api/donations', donationsRoute);
 app.use('/api/carts', cartsRoute);
 app.use('/api/inventory', inventoryRoute);
+app.use('/api/notification', notificationRoute);
 
  
  // test route

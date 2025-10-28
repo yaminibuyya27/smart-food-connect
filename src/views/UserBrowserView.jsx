@@ -10,8 +10,9 @@ import {
 } from '../components/UIComponents';
 import { ShoppingBag, Bell } from 'lucide-react';
 import { api } from "../services/api";
+import { handleNotification } from "../components/notifications";
 
-const UserBrowseView = ({ addToCart, addNotification, notifications }) => {
+const UserBrowseView = ({ currentUser, addToCart, addNotification, notifications }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -57,6 +58,9 @@ const UserBrowseView = ({ addToCart, addNotification, notifications }) => {
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    console.log("current user: ", currentUser == null);
+    
 
   return (
     <Card className="w-full">
@@ -126,8 +130,8 @@ const UserBrowseView = ({ addToCart, addNotification, notifications }) => {
                   ) : (
                     <Button
                       variant="outline"
-                      onClick={() => addNotification(item.id)}
-                      disabled={notifications.includes(item.id)}
+                      onClick={() => handleNotification(currentUser, item)}
+                      disabled={currentUser == null}
                       className="w-full"
                     >
                       <Bell className="mr-2 h-4 w-4" />

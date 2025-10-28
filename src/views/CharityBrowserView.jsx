@@ -10,6 +10,7 @@ import {
 } from '../components/UIComponents';
 import { ShoppingBag, Bell } from 'lucide-react';
 import { api } from "../services/api";
+import { handleNotification } from "../components/notifications";
 
 const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notifications }) => {
     const [foodItems, setFoodItems] = useState([]);
@@ -41,26 +42,6 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Error fetching food items:', error);
-      }
-    };
-
-    const handleNotification = async (item) => {
-      try {
-        await fetch('http://localhost:3001/api/notify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: CurrentUser._id,
-            subject: "Smart Food Connect Notification",
-            message: `You will be notified when "${item.name}" becomes available.`,
-            itemId: item.id
-          })
-        });
-        addNotification(item.id);
-      } catch (error) {
-        console.error("Failed to set notification:", error);
       }
     };
 
@@ -146,7 +127,7 @@ const CharityBrowseView = ({ CurrentUser, addToCart, addNotification, notificati
                     ) : (
                       <Button
                         variant="outline"
-                        onClick={() => handleNotification(item)}
+                        onClick={() => handleNotification(CurrentUser, item)}
                         disabled={notifications.includes(item.id)}
                         className="w-full"
                       >

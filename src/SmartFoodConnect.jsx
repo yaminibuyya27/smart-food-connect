@@ -118,7 +118,7 @@ const SmartFoodConnect = () => {
             case "charityBrowse":
                 return <CharityBrowseView addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
             case "userBrowse":
-                return <UserBrowseView inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
+                return <UserBrowseView currentUser={currentUser} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} />;
             case "cart":
                 return <CartView items={cartItems} setActiveView={setActiveView} removeFromCart={removeFromCart} clearCart={clearCart} loading={loading} />;
             case "inventory": 
