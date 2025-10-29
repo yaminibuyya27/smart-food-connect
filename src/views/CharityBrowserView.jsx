@@ -7,6 +7,7 @@ import {
     CardTitle,
 } from '../components/UIComponents';
 import InventoryCard from '../components/InventoryCard';
+import { Loader2 } from 'lucide-react';
 import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
 
@@ -15,6 +16,7 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
     const [selectedCategory, setSelectedCategory] = useState("");
     const [categories, setCategories] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const API_URL = import.meta.env.VITE_API_URL || '';
   
     useEffect(() => {
@@ -23,6 +25,7 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
   
     const fetchFoodItems = async () => {
       try {
+        setIsLoading(true);
         const data = await api.getInventory();
         const items = data.map(item => ({
           id: item._id,
@@ -40,6 +43,8 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Error fetching food items:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -94,26 +99,35 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
               </select>
             </div>
   
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredFoodItems.map((item) => (
-                <InventoryCard
-                  key={item.id}
-                  item={item}
-                  apiUrl={API_URL}
-                  currentUser={CurrentUser}
-                  notifications={notifications}
-                  onAddToCart={addToCart}
-                  onNotify={handleNotification}
-                  onLoginRequired={() => setActiveView('login')}
-                />
-              ))}
-            </div>
-
-            {filteredFoodItems.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No donations available matching your criteria</p>
-                <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or check back later</p>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
+                <p className="text-gray-500 text-lg">Loading donations...</p>
               </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredFoodItems.map((item) => (
+                    <InventoryCard
+                      key={item.id}
+                      item={item}
+                      apiUrl={API_URL}
+                      currentUser={CurrentUser}
+                      notifications={notifications}
+                      onAddToCart={addToCart}
+                      onNotify={handleNotification}
+                      onLoginRequired={() => setActiveView('login')}
+                    />
+                  ))}
+                </div>
+
+                {filteredFoodItems.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">No donations available matching your criteria</p>
+                    <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or check back later</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </CardContent>
@@ -121,4 +135,4 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
     );
 };
 
-export default CharityBrowseView; 
+export default CharityBrowseView;

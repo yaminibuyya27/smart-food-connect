@@ -9,7 +9,7 @@ import {
 } from '../components/UIComponents';
 import InventoryCard from '../components/InventoryCard';
 import { api } from "../services/api";
-import { Pencil } from 'lucide-react';
+import { Pencil, Loader2 } from 'lucide-react';
 import InventoryView from './InventoryView';
 
 const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications }) => {
@@ -18,6 +18,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [itemToEdit, setItemToEdit] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchFoodItems();
@@ -27,6 +28,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
 
   const fetchFoodItems = async () => {
     try {
+      setIsLoading(true);
       const data = await api.getInventory();
       const items = data.map(item => ({
         id: item._id,
@@ -44,6 +46,8 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
       setCategories(uniqueCategories);
     } catch (error) {
       console.error('Error fetching food items:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,7 +84,6 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
     addNotification?.({ type: 'success', message: 'Item updated successfully!' });
   };
 
-  // Custom action renderer for Edit button
   const renderEditAction = (item) => (
     <Button 
       onClick={() => editItem(item)} 
@@ -102,7 +105,6 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
 
         <CardContent>
           <div className="space-y-4">
-            {/* Search Input */}
             <div>
               <input
                 type="text"
@@ -113,7 +115,6 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
               />
             </div>
 
-            {/* Category Filter */}
             <div>
               <label htmlFor="category" className="block mb-2 font-bold">
                 Filter by Category:
@@ -131,26 +132,33 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
               </select>
             </div>
 
-            {/* Inventory Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredFoodItems.map((item) => (
-                <InventoryCard
-                  key={item.id}
-                  item={item}
-                  apiUrl={API_URL}
-                  currentUser={currentUser}
-                  notifications={notifications}
-                  renderAction={renderEditAction}
-                />
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {filteredFoodItems.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No items in your inventory matching your criteria</p>
-                <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or add new items to your inventory</p>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
+                <p className="text-gray-500 text-lg">Loading inventory...</p>
               </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredFoodItems.map((item) => (
+                    <InventoryCard
+                      key={item.id}
+                      item={item}
+                      apiUrl={API_URL}
+                      currentUser={currentUser}
+                      notifications={notifications}
+                      renderAction={renderEditAction}
+                    />
+                  ))}
+                </div>
+
+                {filteredFoodItems.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">No items in your inventory matching your criteria</p>
+                    <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or add new items to your inventory</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </CardContent>
