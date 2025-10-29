@@ -134,7 +134,7 @@ const SmartFoodConnect = () => {
     };
  
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
             <Header 
                 setActiveView={setActiveView} 
                 cartItemsCount={cartItems.length} 

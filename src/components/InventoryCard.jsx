@@ -62,7 +62,7 @@ const InventoryCard = ({
 
   const handleNotifyClick = () => {
     if (currentUser === null) {
-      alert("Please login before sending the notification");
+      alert("Please login before sending for notify");
       if (onLoginRequired) {
         onLoginRequired();
       }
@@ -79,7 +79,7 @@ const InventoryCard = ({
     : 'fresh';
 
   return (
-    <Card className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
+    <Card className="flex flex-col overflow-hidden bg-white/95 backdrop-blur-sm border border-gray-200 shadow-lg hover:shadow-2xl hover:border-gray-300 hover:bg-white transition-all duration-300 group">
       <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
         <img
           src={`${apiUrl}/api/inventory/image/${item.id}`}
@@ -159,7 +159,7 @@ const InventoryCard = ({
         ) : item.available ? (
           <Button 
             onClick={handleAddToCart}
-            className="w-full inline-flex items-center justify-center gap-2"
+            className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
             size="lg"
           >
             <ShoppingBag className="h-4 w-4" />
@@ -170,7 +170,7 @@ const InventoryCard = ({
             variant="outline"
             onClick={handleNotifyClick}
             disabled={notifications.includes(item.id)}
-            className="w-full inline-flex items-center justify-center gap-2"
+            className="w-full inline-flex items-center justify-center gap-2 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             size="lg"
           >
             <Bell className="h-4 w-4" />
