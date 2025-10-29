@@ -151,6 +151,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
                       onUpdateQuantity={updateCartQuantity}
                       onRemoveFromCart={removeFromCart}
                       renderAction={renderEditAction}
+                      view='retailer'
                     />
                   ))}
                 </div>

@@ -121,6 +121,7 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                     onRemoveFromCart={removeFromCart}
                     onNotify={handleNotification}
                     onLoginRequired={() => setActiveView('login')}
+                    view='shopper'
                   />
                 ))}
               </div>

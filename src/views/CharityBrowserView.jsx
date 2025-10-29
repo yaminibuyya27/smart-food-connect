@@ -120,6 +120,7 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotificat
                       onRemoveFromCart={removeFromCart}
                       onNotify={handleNotification}
                       onLoginRequired={() => setActiveView('login')}
+                      view='charity'
                     />
                   ))}
                 </div>
