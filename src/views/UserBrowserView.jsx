@@ -105,10 +105,7 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                 notifications={notifications}
                 onAddToCart={addToCart}
                 onNotify={handleNotification}
-                onLoginRequired={() => {
-                  alert("Please login before adding items to the cart");
-                  setActiveView('login');
-                }}
+                onLoginRequired={() => setActiveView('login')}
               />
             ))}
           </div>

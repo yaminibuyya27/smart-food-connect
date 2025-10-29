@@ -10,7 +10,7 @@ const InventoryCard = ({
   onAddToCart,
   onNotify,
   onLoginRequired,
-  renderAction 
+  renderAction // Optional: custom action button renderer
 }) => {
   const isExpiringSoon = (expiryDate) => {
     const daysUntilExpiry = Math.ceil((new Date(expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
@@ -49,15 +49,26 @@ const InventoryCard = ({
     }
   };
 
-  const handleNotifyClick = () => {
+  const handleAddToCart = () => {
     if (currentUser === null) {
+      alert("Please login before adding items to the cart");
       if (onLoginRequired) {
         onLoginRequired();
-      } else {
-        alert("Please login before adding items to the cart");
+      }
+    } else {
+      onAddToCart(item);
+    }
+  };
+
+  const handleNotifyClick = () => {
+    if (currentUser === null) {
+      alert("Please login before sending the notification");
+      if (onLoginRequired) {
+        onLoginRequired();
       }
     } else {
       onNotify(currentUser, item);
+      alert(`✓ Notification set! We'll notify you when "${item.name}" is back in stock.`);
     }
   };
 
@@ -79,7 +90,6 @@ const InventoryCard = ({
             e.target.onerror = null;
           }}
         />
-
         <div className="absolute top-3 right-3 flex flex-col gap-2">
           {!item.available && (
             <Badge variant="destructive" className="shadow-md">
@@ -148,7 +158,7 @@ const InventoryCard = ({
           renderAction(item)
         ) : item.available ? (
           <Button 
-            onClick={() => onAddToCart(item)} 
+            onClick={handleAddToCart}
             className="w-full inline-flex items-center justify-center gap-2"
             size="lg"
           >

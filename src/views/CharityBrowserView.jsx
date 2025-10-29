@@ -67,7 +67,6 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
   
         <CardContent>
           <div className="space-y-4">
-            {/* Search Input */}
             <div>
               <input
                 type="text"
@@ -78,7 +77,6 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
               />
             </div>
 
-            {/* Category Filter */}
             <div>
               <label htmlFor="category" className="block mb-2 font-bold">
                 Filter by Category:
@@ -96,7 +94,6 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
               </select>
             </div>
   
-            {/* Inventory Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredFoodItems.map((item) => (
                 <InventoryCard
@@ -107,15 +104,11 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
                   notifications={notifications}
                   onAddToCart={addToCart}
                   onNotify={handleNotification}
-                  onLoginRequired={() => {
-                    alert("Please login before adding items to the cart");
-                    setActiveView('login');
-                  }}
+                  onLoginRequired={() => setActiveView('login')}
                 />
               ))}
             </div>
 
-            {/* Empty State */}
             {filteredFoodItems.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No donations available matching your criteria</p>
@@ -128,4 +121,4 @@ const CharityBrowseView = ({ CurrentUser, setActiveView, addToCart, addNotificat
     );
 };
 
-export default CharityBrowseView;
+export default CharityBrowseView; 
