@@ -12,7 +12,7 @@ import { api } from "../services/api";
 import { Pencil, Loader2 } from 'lucide-react';
 import InventoryView from './InventoryView';
 
-const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications }) => {
+const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -147,6 +147,9 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
                       apiUrl={API_URL}
                       currentUser={currentUser}
                       notifications={notifications}
+                      cartItems={cartItems}
+                      onUpdateQuantity={updateCartQuantity}
+                      onRemoveFromCart={removeFromCart}
                       renderAction={renderEditAction}
                     />
                   ))}

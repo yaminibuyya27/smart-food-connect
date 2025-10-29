@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react';
 import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
 
-const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications }) => {
+const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -115,7 +115,10 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                     apiUrl={API_URL}
                     currentUser={currentUser}
                     notifications={notifications}
+                    cartItems={cartItems}
                     onAddToCart={addToCart}
+                    onUpdateQuantity={updateCartQuantity}
+                    onRemoveFromCart={removeFromCart}
                     onNotify={handleNotification}
                     onLoginRequired={() => setActiveView('login')}
                   />

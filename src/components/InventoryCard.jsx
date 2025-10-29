@@ -1,17 +1,27 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Badge } from './UIComponents';
-import { ShoppingBag, Bell, Calendar, Package } from 'lucide-react';
+import { ShoppingBag, Bell, Calendar, Package, Minus, Plus } from 'lucide-react';
 
 const InventoryCard = ({
   item,
   apiUrl,
   currentUser,
   notifications = [],
+  cartItems = [],
   onAddToCart,
+  onUpdateQuantity,
+  onRemoveFromCart,
   onNotify,
   onLoginRequired,
   renderAction // Optional: custom action button renderer
 }) => {
+  const getItemCartQuantity = () => {
+    const cartItem = cartItems.find(ci => ci.id === item.id);
+    return cartItem ? (cartItem.cartQuantity || 1) : 0;
+  };
+
+  const itemCartQuantity = getItemCartQuantity();
+
   const isExpiringSoon = (expiryDate) => {
     const daysUntilExpiry = Math.ceil((new Date(expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
     return daysUntilExpiry <= 3 && daysUntilExpiry > 0;
@@ -157,14 +167,50 @@ const InventoryCard = ({
         {renderAction ? (
           renderAction(item)
         ) : item.available ? (
-          <Button 
-            onClick={handleAddToCart}
-            className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-            size="lg"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            Add to Cart
-          </Button>
+          itemCartQuantity > 0 ? (
+            <div className="w-full flex items-center justify-between bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-md h-11">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (itemCartQuantity === 1) {
+                    if (onRemoveFromCart) {
+                      onRemoveFromCart(item.id);
+                    }
+                  } else {
+                    if (onUpdateQuantity) {
+                      onUpdateQuantity(item.id, -1);
+                    }
+                  }
+                }}
+                className="flex items-center justify-center w-12 h-full hover:bg-white/20 rounded-l-lg transition-colors"
+              >
+                <Minus className="h-5 w-5" />
+              </button>
+              
+              <span className="flex-1 text-center font-semibold text-base">
+                {itemCartQuantity}
+              </span>
+              
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(e);
+                }}
+                className="flex items-center justify-center w-12 h-full hover:bg-white/20 rounded-r-lg transition-colors"
+              >
+                <Plus className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <Button 
+              onClick={handleAddToCart}
+              className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+              size="lg"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              Add to Cart
+            </Button>
+          )
         ) : (
           <Button
             variant="outline"
