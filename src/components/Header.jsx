@@ -40,7 +40,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                     <Button
                                         variant="outline"
                                         onClick={() => setActiveView("cart")}
-                                        className="inline-flex items-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
+                                        className="inline-flex items-center gap-2 relative bg-gradient-to-r from-blue-500 to-blue-600 hover:bg-gray-50 hover:from-blue-600 hover:to-blue-700 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                                     >
                                         <ShoppingCart className="h-4 w-4" />
                                         Cart
@@ -121,7 +121,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                             setActiveView("cart");
                                             setMobileMenuOpen(false);
                                         }}
-                                        className="w-full inline-flex items-center justify-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
+                                        className="w-full inline-flex items-center justify-center gap-2 relative bg-gradient-to-r from-blue-500 to-blue-600 hover:bg-gray-50 hover:from-blue-600 hover:to-blue-700 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                                     >
                                         <ShoppingCart className="h-4 w-4" />
                                         Cart

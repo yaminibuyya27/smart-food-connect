@@ -151,7 +151,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                         <Button
                             onClick={clearCart}
                             variant="outline"
-                            className="inline-flex items-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700"
+                            className="inline-flex items-center gap-2 justify-center bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                         >
                             <Trash2 className="h-4 w-4" />
                             Clear Cart
@@ -203,8 +203,9 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                     <Button
                                         onClick={() => setActiveView("userBrowse")}
                                         variant="outline"
-                                        className="w-full mt-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
+                                        className="w-full mt-3 border-2 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                                     >
+                                        <ShoppingCart className="h-5 w-5 mr-2" />
                                         Continue Shopping
                                     </Button>
                                 </div>
