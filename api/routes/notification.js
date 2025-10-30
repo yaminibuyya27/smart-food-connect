@@ -5,8 +5,10 @@ import UserModel from '../models/user.js';
 
 const router = express.Router();
  
- router.post('/', async (req, res) => {  
+ router.post('/', async (req, res) => {
+    // eslint-disable-next-line no-undef
     const email_user = process.env.EMAIL_USER;
+    // eslint-disable-next-line no-undef
     const email_pass = process.env.EMAIL_PASS;
 
     const transporter = nodemailer.createTransport({

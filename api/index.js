@@ -41,7 +41,9 @@ app.use('/api/notification', notificationRoute);
  
  
 // Only listen when running locally
+// eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-undef
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);

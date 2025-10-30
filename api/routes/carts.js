@@ -26,6 +26,7 @@ router.post('/:userId/items', async (req, res) => {
         await cart.save();
         res.json(cart);
     } catch (error) {
+        console.error('Error in POST /carts/:userId/items:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -40,6 +41,7 @@ router.put('/:userId', async (req, res) => {
         await cart.save();
         res.json(cart);
     } catch (error) {
+        console.error('Error in PUT /carts/:userId:', error);
         res.status(500).json({ message: error.message });
     }
 });
