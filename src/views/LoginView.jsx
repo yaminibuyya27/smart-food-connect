@@ -10,8 +10,9 @@ import {
     Input,
     Label,
 } from '../components/UIComponents';
+import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 
-const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => { 
+const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -68,46 +69,98 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
     };
 
     return (
-        <Card className="max-w-md mx-auto">
-            <CardHeader>
-                <CardTitle>Login</CardTitle>
-                <CardDescription>Access your Smart Food Connect account</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit}>
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="email">Email</Label>
-                            <Input 
-                                id="email" 
-                                placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="password">Password</Label>
-                            <Input 
-                                id="password" 
-                                type="password" 
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                            />
-                        </div>
-                        {error && <p className="text-red-500">{error}</p>}
-                        {loading && <p>Loading...</p>}
+        <div className="max-w-md mx-auto">
+            <Card className="bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl">
+                <CardHeader className="text-center space-y-4">
+                    <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full mx-auto">
+                        <LogIn className="h-10 w-10 text-blue-600" />
                     </div>
-                    <Button 
-                        className="w-full mt-4" 
-                        type="submit"
-                        disabled={loading}
-                    >
-                        {loading ? 'Logging in...' : 'Log In'}
-                    </Button>
-                </form>
-            </CardContent>
-        </Card>
+                    <div>
+                        <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+                        <CardDescription className="text-base mt-2">
+                            Access your Smart Food Connect account
+                        </CardDescription>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="space-y-4">
+                            <div className="flex flex-col space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <Mail className="h-4 w-4 text-blue-500" />
+                                    <Label htmlFor="email" className="font-semibold">
+                                        Email Address
+                                    </Label>
+                                </div>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    className="h-11"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <Lock className="h-4 w-4 text-blue-500" />
+                                    <Label htmlFor="password" className="font-semibold">
+                                        Password
+                                    </Label>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                    className="h-11"
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-red-600 text-sm font-medium">{error}</p>
+                            </div>
+                        )}
+
+                        <Button
+                            className="w-full h-12 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                    Logging in...
+                                </>
+                            ) : (
+                                <>
+                                    <LogIn className="h-5 w-5" />
+                                    Log In
+                                </>
+                            )}
+                        </Button>
+
+                        <div className="text-center mt-6">
+                            <p className="text-gray-600">
+                                Don't have an account?{' '}
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveView('register')}
+                                    className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors"
+                                >
+                                    Register here
+                                </button>
+                            </p>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     );
 };
 
