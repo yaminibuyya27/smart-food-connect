@@ -10,6 +10,7 @@ import HomeView from './views/HomeView.jsx';
 import CartView from './views/CartView.jsx';
 import CharityBrowseView from './views/CharityBrowserView.jsx';
 import RetailerBrowserView from './views/RetailerBrowserView.jsx';
+import { InventoryProvider } from './context/InventoryContext.jsx';
 
 
 const SmartFoodConnect = () => {
@@ -17,7 +18,6 @@ const SmartFoodConnect = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [cartItems, setCartItems] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const [inventoryItems, setInventoryItems] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -73,21 +73,6 @@ const SmartFoodConnect = () => {
     const removeFromCart = async (itemId) => {
         try {
             setLoading(true);
-            
-            const itemToRemove = cartItems.find(item => item.id === itemId);
-            
-            if (itemToRemove) {
-                const quantityToRestore = itemToRemove.cartQuantity || 1;
-                setInventoryItems(prevItems => {
-                    if (!prevItems || !Array.isArray(prevItems)) return prevItems;
-                    return prevItems.map(invItem => 
-                        invItem.id === itemId 
-                            ? { ...invItem, quantity: invItem.quantity + quantityToRestore }
-                            : invItem
-                    );
-                });
-            }
-            
             setCartItems(prev => prev.filter(item => item.id !== itemId));
         } catch (error) {
             console.error('Failed to remove from cart:', error);
@@ -110,19 +95,6 @@ const SmartFoodConnect = () => {
         loadCart();
     }, [currentUser]);
 
-    useEffect(() => {
-        fetchInventoryItems();
-    }, []);
-    
-    const fetchInventoryItems = async () => {
-        try {
-            const response = await api.getInventory();
-            setInventoryItems(response.data);
-        } catch (error) {
-            console.error('Failed to fetch inventory items:', error);
-        }
-    };
-
     const addToCart = async (item) => {
         if (!currentUser) {
             alert("Please login to add items to cart");
@@ -131,16 +103,16 @@ const SmartFoodConnect = () => {
         }
 
         const existingItemIndex = cartItems.findIndex(cartItem => cartItem.id === item.id);
-        
+
         let updatedCart;
         if (existingItemIndex !== -1) {
             updatedCart = [...cartItems];
             const currentCartQuantity = updatedCart[existingItemIndex].cartQuantity || 1;
-            
+
             if (currentCartQuantity >= item.quantity) {
                 return;
             }
-            
+
             updatedCart[existingItemIndex] = {
                 ...updatedCart[existingItemIndex],
                 cartQuantity: currentCartQuantity + 1
@@ -148,17 +120,8 @@ const SmartFoodConnect = () => {
         } else {
             updatedCart = [...cartItems, { ...item, cartQuantity: 1 }];
         }
-        
+
         setCartItems(updatedCart);
-        
-        setInventoryItems(prevItems => {
-            if (!prevItems || !Array.isArray(prevItems)) return prevItems;
-            return prevItems.map(invItem => 
-                invItem.id === item.id 
-                    ? { ...invItem, quantity: invItem.quantity - 1 }
-                    : invItem
-            );
-        });
 
         try {
             setLoading(true);
@@ -178,21 +141,6 @@ const SmartFoodConnect = () => {
 
         try {
             setLoading(true);
-            
-            if (cartItems && cartItems.length > 0) {
-                cartItems.forEach(cartItem => {
-                    const quantityToRestore = cartItem.cartQuantity || 1;
-                    setInventoryItems(prevItems => {
-                        if (!prevItems || !Array.isArray(prevItems)) return prevItems;
-                        return prevItems.map(invItem => 
-                            invItem.id === cartItem.id 
-                                ? { ...invItem, quantity: invItem.quantity + quantityToRestore }
-                                : invItem
-                        );
-                    });
-                });
-            }
-            
             await api.clearCart(currentUser._id);
             setCartItems([]);
         } catch (error) {
@@ -212,28 +160,12 @@ const SmartFoodConnect = () => {
 
         if (newQuantity < 1) return;
 
-        if (change > 0 && inventoryItems && Array.isArray(inventoryItems)) {
-            const inventoryItem = inventoryItems.find(inv => inv.id === itemId);
-            if (inventoryItem && inventoryItem.quantity < 1) {
-                return;
-            }
-        }
-
         const updatedCart = [...cartItems];
         updatedCart[itemIndex] = {
             ...updatedCart[itemIndex],
             cartQuantity: newQuantity
         };
         setCartItems(updatedCart);
-
-        setInventoryItems(prevItems => {
-            if (!prevItems || !Array.isArray(prevItems)) return prevItems;
-            return prevItems.map(invItem => 
-                invItem.id === itemId 
-                    ? { ...invItem, quantity: invItem.quantity - change }
-                    : invItem
-            );
-        });
     };
 
 
@@ -262,9 +194,9 @@ const SmartFoodConnect = () => {
             case "charityBrowse":
                 return <CharityBrowseView currentUser={currentUser} addToCart={addToCart} setActiveView={setActiveView} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "userBrowse":
-                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "retailerBrowse":
-                return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} inventoryItems={inventoryItems} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "cart":
                 return <CartView items={cartItems} setActiveView={setActiveView} removeFromCart={removeFromCart} clearCart={clearCart} updateCartQuantity={updateCartQuantity} loading={loading} />;
             case "inventory": 
@@ -281,19 +213,21 @@ const SmartFoodConnect = () => {
     };
  
     return (
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
-            <Header 
-                setActiveView={setActiveView} 
-                cartItemsCount={getTotalCartQuantity()} 
-                currentUser={currentUser}
-                handleLogout={handleLogout}
-            />
-            <main className="flex-grow container mx-auto px-4 py-8">
-                {renderView()}
-            </main>
+        <InventoryProvider>
+            <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
+                <Header
+                    setActiveView={setActiveView}
+                    cartItemsCount={getTotalCartQuantity()}
+                    currentUser={currentUser}
+                    handleLogout={handleLogout}
+                />
+                <main className="flex-grow container mx-auto px-4 py-8">
+                    {renderView()}
+                </main>
 
-            {/* Add Footer here */}
-        </div>
+                {/* Add Footer here */}
+            </div>
+        </InventoryProvider>
     );
 };
 

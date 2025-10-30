@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,46 +8,28 @@ import {
 } from '../components/UIComponents';
 import InventoryCard from '../components/InventoryCard';
 import { Loader2 } from 'lucide-react';
-import { api } from "../services/api";
 import { handleNotification } from "../components/notifications";
+import { useInventory } from '../context/InventoryContext';
 
 const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
-  const [foodItems, setFoodItems] = useState([]);
+  const { inventoryItems: rawInventoryItems, loading: isLoading } = useInventory();
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetchFoodItems();
-  }, []);
-
   const API_URL = import.meta.env.VITE_API_URL || '';
 
-  const fetchFoodItems = async () => {
-    try {
-      setIsLoading(true);
-      const data = await api.getInventory();
-      const items = data.map(item => ({
-        id: item._id,
-        name: item.product,
-        price: item.price,
-        expiry: item.expiryDate,
-        available: item.available,
-        category: item.variant,
-        description: item.additionalDetails,
-        quantity: item.quantity,
-        type: item.type
-      }));
-      setFoodItems(items);
-      const uniqueCategories = [...new Set(items.map(item => item.category))];
-      setCategories(uniqueCategories);
-    } catch (error) {
-      console.error('Error fetching food items:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const foodItems = rawInventoryItems.map(item => ({
+    id: item._id,
+    name: item.product,
+    price: item.price,
+    expiry: item.expiryDate,
+    available: item.available,
+    category: item.variant,
+    description: item.additionalDetails,
+    quantity: item.quantity,
+    type: item.type
+  }));
+
+  const categories = [...new Set(foodItems.map(item => item.category))];
 
   const filteredFoodItems = foodItems
     .filter(item => {

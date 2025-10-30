@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { X, Upload, Package, DollarSign, Calendar, Tag, FileText, Image as ImageIcon } from 'lucide-react';
+import { useInventory } from '../context/InventoryContext';
 
-const InventoryView = ({ 
+const InventoryView = ({
     mode = 'add', // 'add' or 'edit'
-    itemToEdit = null, 
+    itemToEdit = null,
     onClose = null,
-    onSuccess = null 
+    onSuccess = null
 }) => {
+    const { refetchInventory } = useInventory();
     const [product, setProduct] = useState('');
     const [quantity, setQuantity] = useState('');
     const [variant, setVariant] = useState('');
@@ -106,13 +108,15 @@ const InventoryView = ({
 
             if (mode === 'edit') {
                 await api.updateInventoryItem(itemToEdit.id || itemToEdit._id, formData);
+                await refetchInventory();
                 alert('Inventory item updated successfully');
                 if (onSuccess) onSuccess();
                 if (onClose) onClose();
             } else {
                 await api.createInventory(formData);
+                await refetchInventory();
                 alert('Inventory item added successfully');
-                
+
                 resetForm();
                 if (onSuccess) onSuccess();
             }
