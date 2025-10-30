@@ -196,7 +196,7 @@ const InventoryCard = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleAddToCart(e);
+                  handleAddToCart(item);
                 }}
                 className="flex items-center justify-center w-12 h-full hover:bg-white/20 rounded-r-lg transition-colors"
               >
@@ -204,8 +204,8 @@ const InventoryCard = ({
               </button>
             </div>
           ) : (
-            <Button 
-              onClick={handleAddToCart}
+            <Button
+              onClick={() => handleAddToCart(item)}
               variant="outline"
               className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
             >

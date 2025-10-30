@@ -33,9 +33,9 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                             Looks like you haven't added any items to your cart yet. 
                             Start shopping to reduce food waste and save money!
                         </p>
-                        <Button 
+                        <Button
                             onClick={() => setActiveView("userBrowse")}
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                             variant='outline'
                         >
                             <ShoppingBag className="h-5 w-5" />
@@ -108,8 +108,15 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                                 <span className="text-sm font-medium text-gray-700">Quantity:</span>
                                                 <div className="flex items-center border-2 border-gray-200 rounded-lg">
                                                     <button
-                                                        onClick={() => updateCartQuantity && updateCartQuantity(item.id, -1)}
-                                                        disabled={loading || (item.cartQuantity || 1) <= 1}
+                                                        onClick={() => {
+                                                            const currentQty = item.cartQuantity || 1;
+                                                            if (currentQty === 1) {
+                                                                removeFromCart(item.id);
+                                                            } else {
+                                                                updateCartQuantity && updateCartQuantity(item.id, -1);
+                                                            }
+                                                        }}
+                                                        disabled={loading}
                                                         className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                                     >
                                                         <Minus className="h-4 w-4 text-gray-600" />
@@ -119,7 +126,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                                     </span>
                                                     <button
                                                         onClick={() => updateCartQuantity && updateCartQuantity(item.id, 1)}
-                                                        disabled={loading || !updateCartQuantity}
+                                                        disabled={loading || !updateCartQuantity || (item.cartQuantity || 1) >= item.quantity}
                                                         className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                                     >
                                                         <Plus className="h-4 w-4 text-gray-600" />
@@ -144,7 +151,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                         <Button
                             onClick={clearCart}
                             variant="outline"
-                            className="inline-flex items-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                            className="inline-flex items-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700"
                         >
                             <Trash2 className="h-4 w-4" />
                             Clear Cart
@@ -186,7 +193,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
 
                                     <Button
                                         onClick={() => setActiveView("checkout")}
-                                        className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                                        className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white hover:text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                                         variant='outline'
                                     >
                                         Proceed to Checkout
@@ -196,7 +203,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                     <Button
                                         onClick={() => setActiveView("userBrowse")}
                                         variant="outline"
-                                        className="w-full mt-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+                                        className="w-full mt-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
                                     >
                                         Continue Shopping
                                     </Button>

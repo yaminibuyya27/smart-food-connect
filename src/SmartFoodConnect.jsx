@@ -59,7 +59,7 @@ const SmartFoodConnect = () => {
         try {
             const response = await api.getCart(userId);
             if (response && response.items) {
-                setCartItems(response.items);
+                setCartItems(response.items || []);
             }
         } catch (error) {
             console.error('Failed to load cart:', error);
@@ -73,7 +73,10 @@ const SmartFoodConnect = () => {
     const removeFromCart = async (itemId) => {
         try {
             setLoading(true);
-            setCartItems(prev => prev.filter(item => item.id !== itemId));
+            const updatedCart = cartItems.filter(item => item.id !== itemId);
+            setCartItems(updatedCart);
+
+            await api.updateCart(currentUser._id, updatedCart);
         } catch (error) {
             console.error('Failed to remove from cart:', error);
         } finally {
@@ -82,17 +85,9 @@ const SmartFoodConnect = () => {
     };
 
     useEffect(() => {
-        const loadCart = async () => {
-            if (currentUser?._id) {
-                try {
-                    const response = await api.getCart(currentUser._id);
-                    setCartItems(response.items || []);
-                } catch (error) {
-                    console.error('Failed to load cart:', error);
-                }
-            }
-        };
-        loadCart();
+        if (currentUser?._id) {
+            loadUserCart(currentUser._id);
+        }
     }, [currentUser]);
 
     const addToCart = async (item) => {
@@ -125,12 +120,10 @@ const SmartFoodConnect = () => {
 
         try {
             setLoading(true);
-            const response = await api.addToCart(currentUser._id, item);
-            if (response && response.items) {
-                setCartItems(response.items);
-            }
+            await api.updateCart(currentUser._id, updatedCart);
         } catch (error) {
             console.error('Failed to add to cart:', error);
+            setCartItems(cartItems);
         } finally {
             setLoading(false);
         }
@@ -150,7 +143,7 @@ const SmartFoodConnect = () => {
         }
     };
 
-    const updateCartQuantity = (itemId, change) => {
+    const updateCartQuantity = async (itemId, change) => {
         const itemIndex = cartItems.findIndex(item => item.id === itemId);
         if (itemIndex === -1) return;
 
@@ -159,6 +152,7 @@ const SmartFoodConnect = () => {
         const newQuantity = currentCartQuantity + change;
 
         if (newQuantity < 1) return;
+        if (newQuantity > item.quantity) return;
 
         const updatedCart = [...cartItems];
         updatedCart[itemIndex] = {
@@ -166,23 +160,21 @@ const SmartFoodConnect = () => {
             cartQuantity: newQuantity
         };
         setCartItems(updatedCart);
+
+        try {
+            await api.updateCart(currentUser._id, updatedCart);
+        } catch (error) {
+            console.error('Failed to update cart on backend:', error);
+        }
     };
 
 
     const handleLogout = async () => {
-        try {
-            if (currentUser?._id) {
-                await api.updateCart(currentUser._id, cartItems);
-            }
-        } catch (error) {
-            console.error('Failed to save cart:', error);
-        } finally {
-            setCurrentUser(null);
-            setCartItems([]);
-            setActiveView("home");
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('activeView');
-        }
+        setCurrentUser(null);
+        setCartItems([]);
+        setActiveView("home");
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('activeView');
     };
 
     const renderView = () => {

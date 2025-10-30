@@ -37,10 +37,10 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                 </span>
                                 
                                 {(currentUser.userType === "shopper" || currentUser.userType === "charity") && (
-                                    <Button 
-                                        variant="outline" 
+                                    <Button
+                                        variant="outline"
                                         onClick={() => setActiveView("cart")}
-                                        className="inline-flex items-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+                                        className="inline-flex items-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
                                     >
                                         <ShoppingCart className="h-4 w-4" />
                                         Cart
@@ -115,13 +115,13 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                 </div>
                                 
                                 {(currentUser.userType === "shopper" || currentUser.userType === "charity") && (
-                                    <Button 
-                                        variant="outline" 
+                                    <Button
+                                        variant="outline"
                                         onClick={() => {
                                             setActiveView("cart");
                                             setMobileMenuOpen(false);
                                         }}
-                                        className="w-full inline-flex items-center justify-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+                                        className="w-full inline-flex items-center justify-center gap-2 relative border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800"
                                     >
                                         <ShoppingCart className="h-4 w-4" />
                                         Cart

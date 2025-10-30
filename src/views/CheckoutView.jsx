@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '../components/UIComponents';
 import {
     CreditCard,
@@ -10,8 +11,7 @@ import {
     CheckCircle,
     ArrowLeft,
     Lock,
-    Calendar,
-    ShieldCheck
+    Calendar
 } from 'lucide-react';
 
 const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
@@ -34,27 +34,206 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
         cardName: '',
         expiryDate: '',
         cvv: '',
-        paymentMethod: 'credit' // 'credit', 'debit', 'paypal'
+        paymentMethod: 'credit' // 'credit', 'debit'
     });
 
     const [orderId, setOrderId] = useState('');
+    const [orderTotal, setOrderTotal] = useState('0.00');
+    const [shippingErrors, setShippingErrors] = useState({});
+    const [paymentErrors, setPaymentErrors] = useState({});
+
+    // US States and their major cities
+    const US_STATES = {
+        'AL': { name: 'Alabama', cities: ['Birmingham', 'Montgomery', 'Mobile', 'Huntsville', 'Tuscaloosa'] },
+        'AK': { name: 'Alaska', cities: ['Anchorage', 'Fairbanks', 'Juneau', 'Sitka', 'Ketchikan'] },
+        'AZ': { name: 'Arizona', cities: ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale'] },
+        'AR': { name: 'Arkansas', cities: ['Little Rock', 'Fort Smith', 'Fayetteville', 'Springdale', 'Jonesboro'] },
+        'CA': { name: 'California', cities: ['Los Angeles', 'San Diego', 'San Jose', 'San Francisco', 'Fresno', 'Sacramento'] },
+        'CO': { name: 'Colorado', cities: ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood'] },
+        'CT': { name: 'Connecticut', cities: ['Bridgeport', 'New Haven', 'Stamford', 'Hartford', 'Waterbury'] },
+        'DE': { name: 'Delaware', cities: ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna'] },
+        'FL': { name: 'Florida', cities: ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg'] },
+        'GA': { name: 'Georgia', cities: ['Atlanta', 'Augusta', 'Columbus', 'Savannah', 'Athens'] },
+        'HI': { name: 'Hawaii', cities: ['Honolulu', 'Pearl City', 'Hilo', 'Kailua', 'Waipahu'] },
+        'ID': { name: 'Idaho', cities: ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello'] },
+        'IL': { name: 'Illinois', cities: ['Chicago', 'Aurora', 'Rockford', 'Joliet', 'Naperville'] },
+        'IN': { name: 'Indiana', cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel'] },
+        'IA': { name: 'Iowa', cities: ['Des Moines', 'Cedar Rapids', 'Davenport', 'Sioux City', 'Iowa City'] },
+        'KS': { name: 'Kansas', cities: ['Wichita', 'Overland Park', 'Kansas City', 'Topeka', 'Olathe'] },
+        'KY': { name: 'Kentucky', cities: ['Louisville', 'Lexington', 'Bowling Green', 'Owensboro', 'Covington'] },
+        'LA': { name: 'Louisiana', cities: ['New Orleans', 'Baton Rouge', 'Shreveport', 'Lafayette', 'Lake Charles'] },
+        'ME': { name: 'Maine', cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn'] },
+        'MD': { name: 'Maryland', cities: ['Baltimore', 'Frederick', 'Rockville', 'Gaithersburg', 'Bowie'] },
+        'MA': { name: 'Massachusetts', cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell'] },
+        'MI': { name: 'Michigan', cities: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor'] },
+        'MN': { name: 'Minnesota', cities: ['Minneapolis', 'St. Paul', 'Rochester', 'Duluth', 'Bloomington'] },
+        'MS': { name: 'Mississippi', cities: ['Jackson', 'Gulfport', 'Southaven', 'Hattiesburg', 'Biloxi'] },
+        'MO': { name: 'Missouri', cities: ['Kansas City', 'St. Louis', 'Springfield', 'Columbia', 'Independence'] },
+        'MT': { name: 'Montana', cities: ['Billings', 'Missoula', 'Great Falls', 'Bozeman', 'Butte'] },
+        'NE': { name: 'Nebraska', cities: ['Omaha', 'Lincoln', 'Bellevue', 'Grand Island', 'Kearney'] },
+        'NV': { name: 'Nevada', cities: ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks'] },
+        'NH': { name: 'New Hampshire', cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester'] },
+        'NJ': { name: 'New Jersey', cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison'] },
+        'NM': { name: 'New Mexico', cities: ['Albuquerque', 'Las Cruces', 'Rio Rancho', 'Santa Fe', 'Roswell'] },
+        'NY': { name: 'New York', cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse'] },
+        'NC': { name: 'North Carolina', cities: ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem'] },
+        'ND': { name: 'North Dakota', cities: ['Fargo', 'Bismarck', 'Grand Forks', 'Minot', 'West Fargo'] },
+        'OH': { name: 'Ohio', cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron'] },
+        'OK': { name: 'Oklahoma', cities: ['Oklahoma City', 'Tulsa', 'Norman', 'Broken Arrow', 'Lawton'] },
+        'OR': { name: 'Oregon', cities: ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro'] },
+        'PA': { name: 'Pennsylvania', cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading'] },
+        'RI': { name: 'Rhode Island', cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence'] },
+        'SC': { name: 'South Carolina', cities: ['Columbia', 'Charleston', 'North Charleston', 'Mount Pleasant', 'Rock Hill'] },
+        'SD': { name: 'South Dakota', cities: ['Sioux Falls', 'Rapid City', 'Aberdeen', 'Brookings', 'Watertown'] },
+        'TN': { name: 'Tennessee', cities: ['Nashville', 'Memphis', 'Knoxville', 'Chattanooga', 'Clarksville'] },
+        'TX': { name: 'Texas', cities: ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth'] },
+        'UT': { name: 'Utah', cities: ['Salt Lake City', 'West Valley City', 'Provo', 'West Jordan', 'Orem'] },
+        'VT': { name: 'Vermont', cities: ['Burlington', 'South Burlington', 'Rutland', 'Barre', 'Montpelier'] },
+        'VA': { name: 'Virginia', cities: ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News'] },
+        'WA': { name: 'Washington', cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue'] },
+        'WV': { name: 'West Virginia', cities: ['Charleston', 'Huntington', 'Morgantown', 'Parkersburg', 'Wheeling'] },
+        'WI': { name: 'Wisconsin', cities: ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine'] },
+        'WY': { name: 'Wyoming', cities: ['Cheyenne', 'Casper', 'Laramie', 'Gillette', 'Rock Springs'] }
+    };
+
+    const getAvailableCities = () => {
+        if (!shippingInfo.state || !US_STATES[shippingInfo.state]) {
+            return [];
+        }
+        return US_STATES[shippingInfo.state].cities;
+    };
 
     const calculateTotal = () => {
         return cartItems.reduce((total, item) => total + (item.price * (item.cartQuantity || 1)), 0).toFixed(2);
     };
 
+    const validateShipping = () => {
+        const errors = {};
+
+        if (!shippingInfo.fullName.trim()) {
+            errors.fullName = 'Full name is required';
+        } else if (shippingInfo.fullName.trim().length < 2) {
+            errors.fullName = 'Name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s]+$/.test(shippingInfo.fullName)) {
+            errors.fullName = 'Name can only contain letters and spaces';
+        }
+
+        if (!shippingInfo.email.trim()) {
+            errors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingInfo.email)) {
+            errors.email = 'Please enter a valid email address';
+        }
+
+        if (!shippingInfo.phone.trim()) {
+            errors.phone = 'Phone number is required';
+        } else {
+            const phoneDigits = shippingInfo.phone.replace(/\D/g, '');
+            if (phoneDigits.length < 10) {
+                errors.phone = 'Phone number must be at least 10 digits';
+            }
+        }
+
+        if (!shippingInfo.address.trim()) {
+            errors.address = 'Street address is required';
+        } else if (shippingInfo.address.trim().length < 5) {
+            errors.address = 'Please enter a complete address';
+        }
+
+        if (!shippingInfo.city.trim()) {
+            errors.city = 'City is required';
+        } else if (shippingInfo.city.trim().length < 2) {
+            errors.city = 'Please enter a valid city name';
+        }
+
+        if (!shippingInfo.state.trim()) {
+            errors.state = 'State is required';
+        } else if (!US_STATES[shippingInfo.state]) {
+            errors.state = 'Please select a valid state';
+        }
+
+        if (!shippingInfo.zipCode.trim()) {
+            errors.zipCode = 'ZIP code is required';
+        } else if (!/^\d{5}(-\d{4})?$/.test(shippingInfo.zipCode.trim())) {
+            errors.zipCode = 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)';
+        }
+
+        return errors;
+    };
+
+    const validatePayment = () => {
+        const errors = {};
+
+        if (!paymentInfo.cardName.trim()) {
+            errors.cardName = 'Cardholder name is required';
+        } else if (paymentInfo.cardName.trim().length < 2) {
+            errors.cardName = 'Name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s]+$/.test(paymentInfo.cardName)) {
+            errors.cardName = 'Name can only contain letters and spaces';
+        }
+
+        if (!paymentInfo.cardNumber.trim()) {
+            errors.cardNumber = 'Card number is required';
+        } else {
+            const cardDigits = paymentInfo.cardNumber.replace(/\s/g, '');
+            if (!/^\d{13,19}$/.test(cardDigits)) {
+                errors.cardNumber = 'Please enter a valid card number (13-19 digits)';
+            }
+        }
+
+        if (!paymentInfo.expiryDate.trim()) {
+            errors.expiryDate = 'Expiry date is required';
+        } else if (!/^\d{2}\/\d{2}$/.test(paymentInfo.expiryDate)) {
+            errors.expiryDate = 'Format must be MM/YY';
+        } else {
+            const [month, year] = paymentInfo.expiryDate.split('/');
+            const monthNum = parseInt(month, 10);
+            const yearNum = parseInt('20' + year, 10);
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+
+            if (monthNum < 1 || monthNum > 12) {
+                errors.expiryDate = 'Invalid month (must be 01-12)';
+            } else if (yearNum < currentYear || (yearNum === currentYear && monthNum < currentMonth)) {
+                errors.expiryDate = 'Card has expired';
+            }
+        }
+
+        if (!paymentInfo.cvv.trim()) {
+            errors.cvv = 'CVV is required';
+        } else if (!/^\d{3,4}$/.test(paymentInfo.cvv)) {
+            errors.cvv = 'CVV must be 3 or 4 digits';
+        }
+
+        return errors;
+    };
+
     const handleShippingSubmit = (e) => {
         e.preventDefault();
-        setStep('payment');
+        const errors = validateShipping();
+        setShippingErrors(errors);
+
+        if (Object.keys(errors).length === 0) {
+            setStep('payment');
+        }
     };
 
     const handlePaymentSubmit = async (e) => {
         e.preventDefault();
+        const errors = validatePayment();
+        setPaymentErrors(errors);
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
+
         setLoading(true);
 
         setTimeout(() => {
-            const newOrderId = 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            const newOrderId = 'ORD-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11).toUpperCase();
             setOrderId(newOrderId);
+
+            const total = calculateTotal();
+            setOrderTotal(total);
 
             if (clearCart) clearCart();
             setStep('confirmation');
@@ -62,17 +241,29 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
         }, 2000);
     };
 
-    const formatCardNumber = (value) => {
-        const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-        const matches = v.match(/\d{4,16}/g);
-        const match = (matches && matches[0]) || '';
-        const parts = [];
+    const formatPhoneNumber = (value) => {
+        const digits = value.replace(/\D/g, '');
+        const limited = digits.slice(0, 10);
 
-        for (let i = 0, len = match.length; i < len; i += 4) {
-            parts.push(match.substring(i, i + 4));
+        if (limited.length <= 3) {
+            return limited;
+        } else if (limited.length <= 6) {
+            return `(${limited.slice(0, 3)}) ${limited.slice(3)}`;
+        } else {
+            return `(${limited.slice(0, 3)}) ${limited.slice(3, 6)}-${limited.slice(6)}`;
+        }
+    };
+
+    const formatCardNumber = (value) => {
+        const digits = value.replace(/\D/g, '');
+        const limited = digits.slice(0, 16);
+        
+        const parts = [];
+        for (let i = 0; i < limited.length; i += 4) {
+            parts.push(limited.substring(i, i + 4));
         }
 
-        return parts.length ? parts.join(' ') : value;
+        return parts.join(' ');
     };
 
     const formatExpiryDate = (value) => {
@@ -107,7 +298,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-700 font-medium">Total Amount:</span>
-                                    <span className="text-2xl font-bold text-green-600">${calculateTotal()}</span>
+                                    <span className="text-2xl font-bold text-green-600">${orderTotal}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-700 font-medium">Email:</span>
@@ -198,12 +389,23 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                         </label>
                                         <input
                                             type="text"
-                                            required
                                             value={shippingInfo.fullName}
-                                            onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
-                                            className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                            onChange={(e) => {
+                                                setShippingInfo({ ...shippingInfo, fullName: e.target.value });
+                                                if (shippingErrors.fullName) {
+                                                    setShippingErrors({ ...shippingErrors, fullName: '' });
+                                                }
+                                            }}
+                                            className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                shippingErrors.fullName
+                                                    ? 'border-red-500 focus:border-red-500'
+                                                    : 'border-gray-200 focus:border-blue-500'
+                                            }`}
                                             placeholder="John Doe"
                                         />
+                                        {shippingErrors.fullName && (
+                                            <p className="text-red-600 text-sm mt-1">{shippingErrors.fullName}</p>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -214,12 +416,23 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                             </label>
                                             <input
                                                 type="email"
-                                                required
                                                 value={shippingInfo.email}
-                                                onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-                                                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                onChange={(e) => {
+                                                    setShippingInfo({ ...shippingInfo, email: e.target.value });
+                                                    if (shippingErrors.email) {
+                                                        setShippingErrors({ ...shippingErrors, email: '' });
+                                                    }
+                                                }}
+                                                className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                    shippingErrors.email
+                                                        ? 'border-red-500 focus:border-red-500'
+                                                        : 'border-gray-200 focus:border-blue-500'
+                                                }`}
                                                 placeholder="john@example.com"
                                             />
+                                            {shippingErrors.email && (
+                                                <p className="text-red-600 text-sm mt-1">{shippingErrors.email}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -228,12 +441,24 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                             </label>
                                             <input
                                                 type="tel"
-                                                required
                                                 value={shippingInfo.phone}
-                                                onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
-                                                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                onChange={(e) => {
+                                                    setShippingInfo({ ...shippingInfo, phone: formatPhoneNumber(e.target.value) });
+                                                    if (shippingErrors.phone) {
+                                                        setShippingErrors({ ...shippingErrors, phone: '' });
+                                                    }
+                                                }}
+                                                className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                    shippingErrors.phone
+                                                        ? 'border-red-500 focus:border-red-500'
+                                                        : 'border-gray-200 focus:border-blue-500'
+                                                }`}
                                                 placeholder="(555) 123-4567"
+                                                maxLength={14}
                                             />
+                                            {shippingErrors.phone && (
+                                                <p className="text-red-600 text-sm mt-1">{shippingErrors.phone}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -244,47 +469,108 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                         </label>
                                         <input
                                             type="text"
-                                            required
                                             value={shippingInfo.address}
-                                            onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
-                                            className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                            onChange={(e) => {
+                                                setShippingInfo({ ...shippingInfo, address: e.target.value });
+                                                if (shippingErrors.address) {
+                                                    setShippingErrors({ ...shippingErrors, address: '' });
+                                                }
+                                            }}
+                                            className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                shippingErrors.address
+                                                    ? 'border-red-500 focus:border-red-500'
+                                                    : 'border-gray-200 focus:border-blue-500'
+                                            }`}
                                             placeholder="123 Main Street, Apt 4B"
                                         />
+                                        {shippingErrors.address && (
+                                            <p className="text-red-600 text-sm mt-1">{shippingErrors.address}</p>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={shippingInfo.city}
-                                                onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
-                                                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
-                                                placeholder="New York"
-                                            />
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">State</label>
+                                            <select
+                                                value={shippingInfo.state}
+                                                onChange={(e) => {
+                                                    setShippingInfo({ ...shippingInfo, state: e.target.value, city: '' });
+                                                    if (shippingErrors.state) {
+                                                        setShippingErrors({ ...shippingErrors, state: '' });
+                                                    }
+                                                    if (shippingErrors.city) {
+                                                        setShippingErrors({ ...shippingErrors, city: '' });
+                                                    }
+                                                }}
+                                                className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                    shippingErrors.state
+                                                        ? 'border-red-500 focus:border-red-500'
+                                                        : 'border-gray-200 focus:border-blue-500'
+                                                }`}
+                                            >
+                                                <option value="">Select State</option>
+                                                {Object.keys(US_STATES).sort().map(code => (
+                                                    <option key={code} value={code}>
+                                                        {code} - {US_STATES[code].name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {shippingErrors.state && (
+                                                <p className="text-red-600 text-sm mt-1">{shippingErrors.state}</p>
+                                            )}
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-2">State</label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={shippingInfo.state}
-                                                onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
-                                                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
-                                                placeholder="NY"
-                                            />
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                                            <select
+                                                value={shippingInfo.city}
+                                                onChange={(e) => {
+                                                    setShippingInfo({ ...shippingInfo, city: e.target.value });
+                                                    if (shippingErrors.city) {
+                                                        setShippingErrors({ ...shippingErrors, city: '' });
+                                                    }
+                                                }}
+                                                disabled={!shippingInfo.state}
+                                                className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                                                    shippingErrors.city
+                                                        ? 'border-red-500 focus:border-red-500'
+                                                        : 'border-gray-200 focus:border-blue-500'
+                                                }`}
+                                            >
+                                                <option value="">
+                                                    {shippingInfo.state ? 'Select City' : 'Select State First'}
+                                                </option>
+                                                {getAvailableCities().map(city => (
+                                                    <option key={city} value={city}>
+                                                        {city}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {shippingErrors.city && (
+                                                <p className="text-red-600 text-sm mt-1">{shippingErrors.city}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 mb-2">ZIP Code</label>
                                             <input
                                                 type="text"
-                                                required
                                                 value={shippingInfo.zipCode}
-                                                onChange={(e) => setShippingInfo({ ...shippingInfo, zipCode: e.target.value })}
-                                                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                onChange={(e) => {
+                                                    setShippingInfo({ ...shippingInfo, zipCode: e.target.value });
+                                                    if (shippingErrors.zipCode) {
+                                                        setShippingErrors({ ...shippingErrors, zipCode: '' });
+                                                    }
+                                                }}
+                                                className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                    shippingErrors.zipCode
+                                                        ? 'border-red-500 focus:border-red-500'
+                                                        : 'border-gray-200 focus:border-blue-500'
+                                                }`}
                                                 placeholder="10001"
+                                                maxLength={10}
                                             />
+                                            {shippingErrors.zipCode && (
+                                                <p className="text-red-600 text-sm mt-1">{shippingErrors.zipCode}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -309,7 +595,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">
                                             Payment Method
                                         </label>
-                                        <div className="grid grid-cols-3 gap-3">
+                                        <div className="grid grid-cols-2 gap-3">
                                             <button
                                                 type="button"
                                                 onClick={() => setPaymentInfo({ ...paymentInfo, paymentMethod: 'credit' })}
@@ -332,22 +618,8 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                                 <CreditCard className="h-6 w-6 mx-auto mb-2 text-green-500" />
                                                 <span className="text-sm font-semibold">Debit Card</span>
                                             </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setPaymentInfo({ ...paymentInfo, paymentMethod: 'paypal' })}
-                                                className={`p-4 border-2 rounded-lg transition-all ${paymentInfo.paymentMethod === 'paypal'
-                                                        ? 'border-blue-500 bg-blue-50'
-                                                        : 'border-gray-200 hover:border-gray-300'
-                                                    }`}
-                                            >
-                                                <ShieldCheck className="h-6 w-6 mx-auto mb-2 text-purple-500" />
-                                                <span className="text-sm font-semibold">PayPal</span>
-                                            </button>
                                         </div>
                                     </div>
-
-                                    {(paymentInfo.paymentMethod === 'credit' || paymentInfo.paymentMethod === 'debit') && (
-                                        <>
                                             <div>
                                                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                                                     <User className="h-4 w-4 text-blue-500" />
@@ -355,12 +627,23 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    required
                                                     value={paymentInfo.cardName}
-                                                    onChange={(e) => setPaymentInfo({ ...paymentInfo, cardName: e.target.value })}
-                                                    className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                    onChange={(e) => {
+                                                        setPaymentInfo({ ...paymentInfo, cardName: e.target.value });
+                                                        if (paymentErrors.cardName) {
+                                                            setPaymentErrors({ ...paymentErrors, cardName: '' });
+                                                        }
+                                                    }}
+                                                    className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                        paymentErrors.cardName
+                                                            ? 'border-red-500 focus:border-red-500'
+                                                            : 'border-gray-200 focus:border-blue-500'
+                                                    }`}
                                                     placeholder="John Doe"
                                                 />
+                                                {paymentErrors.cardName && (
+                                                    <p className="text-red-600 text-sm mt-1">{paymentErrors.cardName}</p>
+                                                )}
                                             </div>
 
                                             <div>
@@ -370,13 +653,24 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    required
                                                     maxLength={19}
                                                     value={paymentInfo.cardNumber}
-                                                    onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: formatCardNumber(e.target.value) })}
-                                                    className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                    onChange={(e) => {
+                                                        setPaymentInfo({ ...paymentInfo, cardNumber: formatCardNumber(e.target.value) });
+                                                        if (paymentErrors.cardNumber) {
+                                                            setPaymentErrors({ ...paymentErrors, cardNumber: '' });
+                                                        }
+                                                    }}
+                                                    className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                        paymentErrors.cardNumber
+                                                            ? 'border-red-500 focus:border-red-500'
+                                                            : 'border-gray-200 focus:border-blue-500'
+                                                    }`}
                                                     placeholder="1234 5678 9012 3456"
                                                 />
+                                                {paymentErrors.cardNumber && (
+                                                    <p className="text-red-600 text-sm mt-1">{paymentErrors.cardNumber}</p>
+                                                )}
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
@@ -387,13 +681,24 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        required
                                                         maxLength={5}
                                                         value={paymentInfo.expiryDate}
-                                                        onChange={(e) => setPaymentInfo({ ...paymentInfo, expiryDate: formatExpiryDate(e.target.value) })}
-                                                        className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                        onChange={(e) => {
+                                                            setPaymentInfo({ ...paymentInfo, expiryDate: formatExpiryDate(e.target.value) });
+                                                            if (paymentErrors.expiryDate) {
+                                                                setPaymentErrors({ ...paymentErrors, expiryDate: '' });
+                                                            }
+                                                        }}
+                                                        className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                            paymentErrors.expiryDate
+                                                                ? 'border-red-500 focus:border-red-500'
+                                                                : 'border-gray-200 focus:border-blue-500'
+                                                        }`}
                                                         placeholder="MM/YY"
                                                     />
+                                                    {paymentErrors.expiryDate && (
+                                                        <p className="text-red-600 text-sm mt-1">{paymentErrors.expiryDate}</p>
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -402,25 +707,26 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        required
                                                         maxLength={4}
                                                         value={paymentInfo.cvv}
-                                                        onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value.replace(/\D/g, '') })}
-                                                        className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                                                        onChange={(e) => {
+                                                            setPaymentInfo({ ...paymentInfo, cvv: e.target.value.replace(/\D/g, '') });
+                                                            if (paymentErrors.cvv) {
+                                                                setPaymentErrors({ ...paymentErrors, cvv: '' });
+                                                            }
+                                                        }}
+                                                        className={`w-full p-3 border-2 rounded-lg bg-white focus:outline-none transition-colors ${
+                                                            paymentErrors.cvv
+                                                                ? 'border-red-500 focus:border-red-500'
+                                                                : 'border-gray-200 focus:border-blue-500'
+                                                        }`}
                                                         placeholder="123"
                                                     />
+                                                    {paymentErrors.cvv && (
+                                                        <p className="text-red-600 text-sm mt-1">{paymentErrors.cvv}</p>
+                                                    )}
                                                 </div>
                                             </div>
-                                        </>
-                                    )}
-
-                                    {paymentInfo.paymentMethod === 'paypal' && (
-                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                            <p className="text-sm text-blue-800">
-                                                You will be redirected to PayPal to complete your payment securely.
-                                            </p>
-                                        </div>
-                                    )}
 
                                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                         <div className="flex items-center gap-2 text-green-700">

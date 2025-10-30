@@ -44,12 +44,15 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
 
                 const cartResponse = await api.getCart(response.user._id);
-                setCartItems(cartResponse.items || []);
-                localStorage.setItem('cartItems', JSON.stringify(cartResponse.items || []));
+                if (cartResponse && cartResponse.items) {
+                    setCartItems(cartResponse.items);
+                } else {
+                    setCartItems([]);
+                }
+
                 if(response.user.userType === 'shopper') {
                     setActiveView("userBrowse");
                 }
-
                 else if(response.user.userType === 'retailer') {
                     setActiveView("retailerBrowse");
                 }
