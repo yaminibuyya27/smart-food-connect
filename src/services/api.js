@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// @ts-ignore - Vite env variable
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const api = {

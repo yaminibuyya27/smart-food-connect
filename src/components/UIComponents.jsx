@@ -16,17 +16,19 @@ export const CardFooter = ({ children }) => <div className="p-4 border-t">{child
 export const CardTitle = ({ children }) => <h2 className="text-xl font-bold">{children}</h2>;
 export const CardDescription = ({ children }) => <p className="text-gray-500">{children}</p>;
 
-export const Input = ({ id, placeholder, onChange, type = 'text' }) => (
+export const Input = ({ id, value, disabled, placeholder, onChange, type = 'text' }) => (
   <input
     id={id}
+    value={value}
     type={type}
     placeholder={placeholder}
     onChange={onChange}
+    disabled={disabled}
     className="w-full px-3 py-2 border rounded"
   />
 );
 
-export const Label = ({ htmlFor, children }) => (
+export const Label = ({ htmlFor = null, children }) => (
   <label htmlFor={htmlFor} className="block mb-1">
     {children}
   </label>

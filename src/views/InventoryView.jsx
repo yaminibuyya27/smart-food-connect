@@ -23,6 +23,7 @@ const InventoryView = ({
     const [type, setType] = useState('shopper');
     const [originalData, setOriginalData] = useState(null);
 
+    // @ts-ignore - Vite env variable
     const API_URL = import.meta.env.VITE_API_URL || '';
 
     useEffect(() => {
@@ -215,7 +216,7 @@ const InventoryView = ({
                     value={additionalDetails} 
                     onChange={(e) => setAdditionalDetails(e.target.value)} 
                     placeholder="e.g., Organic, Locally Grown, Non-GMO" 
-                    rows="3"
+                    rows={3}
                 />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -283,8 +284,8 @@ const InventoryView = ({
                                 alt="Preview" 
                                 className="max-w-xs rounded-lg shadow-md border-2 border-gray-200 group-hover:shadow-xl transition-shadow"
                                 onError={(e) => {
-                                    e.target.src = '/placeholder-food.png';
-                                    e.target.onerror = null;
+                                    e.currentTarget.src = '/placeholder-food.png';
+                                    e.currentTarget.onerror = null;
                                 }}
                             />
                             {image && (

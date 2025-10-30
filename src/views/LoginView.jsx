@@ -71,13 +71,13 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
     return (
         <div className="max-w-md mx-auto">
             <Card className="bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl">
-                <CardHeader className="text-center space-y-4">
+                <CardHeader>
                     <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full mx-auto">
                         <LogIn className="h-10 w-10 text-blue-600" />
                     </div>
                     <div>
-                        <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
-                        <CardDescription className="text-base mt-2">
+                        <CardTitle>Welcome Back</CardTitle>
+                        <CardDescription>
                             Access your Smart Food Connect account
                         </CardDescription>
                     </div>
@@ -88,7 +88,7 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center gap-2">
                                     <Mail className="h-4 w-4 text-blue-500" />
-                                    <Label htmlFor="email" className="font-semibold">
+                                    <Label htmlFor="email">
                                         Email Address
                                     </Label>
                                 </div>
@@ -98,14 +98,13 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                                     placeholder="Enter your email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    className="h-11"
                                     disabled={loading}
                                 />
                             </div>
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center gap-2">
                                     <Lock className="h-4 w-4 text-blue-500" />
-                                    <Label htmlFor="password" className="font-semibold">
+                                    <Label htmlFor="password">
                                         Password
                                     </Label>
                                 </div>
@@ -115,7 +114,6 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                                     placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                    className="h-11"
                                     disabled={loading}
                                 />
                             </div>
@@ -129,8 +127,8 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
 
                         <Button
                             className="w-full h-12 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-                            type="submit"
-                            disabled={loading}
+                            variant="outline"
+                            onClick={handleSubmit}
                         >
                             {loading ? (
                                 <>

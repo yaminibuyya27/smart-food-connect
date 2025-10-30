@@ -36,7 +36,7 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                         <Button 
                             onClick={() => setActiveView("userBrowse")}
                             className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-                            size="lg"
+                            variant='outline'
                         >
                             <ShoppingBag className="h-5 w-5" />
                             Start Shopping
@@ -70,12 +70,13 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <div className="flex-shrink-0 w-full sm:w-32 h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden">
                                         <img
+                                        // @ts-ignore - Vite env variable
                                             src={`${import.meta.env.VITE_API_URL || ''}/api/inventory/image/${item.id}`}
                                             alt={item.name}
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
-                                                e.target.src = '/placeholder-food.png';
-                                                e.target.onerror = null;
+                                                e.currentTarget.src = '/placeholder-food.png';
+                                                e.currentTarget.onerror = null;
                                             }}
                                         />
                                     </div>
@@ -142,7 +143,6 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                     <div className="flex justify-end">
                         <Button
                             onClick={clearCart}
-                            disabled={loading}
                             variant="outline"
                             className="inline-flex items-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
                         >
@@ -155,10 +155,10 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                 <div className="lg:col-span-1">
                     <div className="sticky top-24">
                         <Card className="bg-white/95 backdrop-blur-sm border border-gray-200 shadow-lg">
-                            <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-                                <CardTitle className="text-xl font-bold">Order Summary</CardTitle>
+                            <CardHeader>
+                                <CardTitle>Order Summary</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4 pt-6">
+                            <CardContent>
                                 <div className="flex justify-between items-center pb-3 border-b">
                                     <span className="text-gray-700 font-medium">Subtotal</span>
                                     <span className="text-xl font-bold text-gray-800">${calculateTotal()}</span>
@@ -186,9 +186,8 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
 
                                     <Button
                                         onClick={() => setActiveView("checkout")}
-                                        disabled={loading}
                                         className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-                                        size="lg"
+                                        variant='outline'
                                     >
                                         Proceed to Checkout
                                         <ArrowRight className="h-5 w-5" />

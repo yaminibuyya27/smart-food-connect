@@ -11,10 +11,11 @@ import { Loader2 } from 'lucide-react';
 import { handleNotification } from "../components/notifications";
 import { useInventory } from '../context/InventoryContext';
 
-const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
+const CharityBrowseView = ({ currentUser, setActiveView, addToCart, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
     const { inventoryItems: rawInventoryItems, loading: isLoading } = useInventory();
     const [selectedCategory, setSelectedCategory] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    // @ts-ignore - Vite env variable
     const API_URL = import.meta.env.VITE_API_URL || '';
 
     const foodItems = rawInventoryItems.map(item => ({
@@ -29,7 +30,7 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotificat
         type: item.type
     }));
 
-    const categories = [...new Set(foodItems.map(item => item.category))];
+    const categories = Array.from(new Set(foodItems.map(item => item.category)));
 
     const filteredFoodItems = foodItems
       .filter(item => {
@@ -52,7 +53,7 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotificat
           <CardTitle>Available Donations</CardTitle>
           <CardDescription>Claim donations for your charity</CardDescription>
         </CardHeader>
-  
+
         <CardContent>
           <div className="space-y-4">
             <div>
@@ -104,6 +105,7 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotificat
                       onNotify={handleNotification}
                       onLoginRequired={() => setActiveView('login')}
                       view='charity'
+                      setActiveView={setActiveView}
                     />
                   ))}
                 </div>

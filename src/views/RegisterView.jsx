@@ -54,13 +54,13 @@ const RegisterView = ({ setActiveView }) => {
     return (
         <div className="max-w-md mx-auto">
             <Card className="bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl">
-                <CardHeader className="text-center space-y-4">
+                <CardHeader>
                     <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-100 to-blue-100 rounded-full mx-auto">
                         <UserPlus className="h-10 w-10 text-green-600" />
                     </div>
                     <div>
-                        <CardTitle className="text-3xl font-bold">Join Smart Food Connect</CardTitle>
-                        <CardDescription className="text-base mt-2">
+                        <CardTitle>Join Smart Food Connect</CardTitle>
+                        <CardDescription>
                             Create your account and start making a difference
                         </CardDescription>
                     </div>
@@ -71,7 +71,7 @@ const RegisterView = ({ setActiveView }) => {
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center gap-2">
                                     <User className="h-4 w-4 text-green-500" />
-                                    <Label htmlFor="name" className="font-semibold">
+                                    <Label htmlFor="name">
                                         Full Name
                                     </Label>
                                 </div>
@@ -80,7 +80,6 @@ const RegisterView = ({ setActiveView }) => {
                                     placeholder="Enter your full name"
                                     value={formData.name}
                                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                    className="h-11"
                                     disabled={loading}
                                 />
                             </div>
@@ -88,7 +87,7 @@ const RegisterView = ({ setActiveView }) => {
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center gap-2">
                                     <Mail className="h-4 w-4 text-green-500" />
-                                    <Label htmlFor="email" className="font-semibold">
+                                    <Label htmlFor="email">
                                         Email Address
                                     </Label>
                                 </div>
@@ -98,7 +97,6 @@ const RegisterView = ({ setActiveView }) => {
                                     placeholder="Enter your email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    className="h-11"
                                     disabled={loading}
                                 />
                             </div>
@@ -106,7 +104,7 @@ const RegisterView = ({ setActiveView }) => {
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center gap-2">
                                     <Lock className="h-4 w-4 text-green-500" />
-                                    <Label htmlFor="password" className="font-semibold">
+                                    <Label htmlFor="password">
                                         Password
                                     </Label>
                                 </div>
@@ -116,14 +114,13 @@ const RegisterView = ({ setActiveView }) => {
                                     placeholder="Create a strong password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                    className="h-11"
                                     disabled={loading}
                                 />
                             </div>
 
                             <div className="flex flex-col space-y-3">
-                                <Label className="font-semibold text-base">I am a...</Label>
-                                <RadioGroup value={formData.userType}>
+                                <Label>I am a...</Label>
+                                <RadioGroup>
                                     <div className="space-y-3">
                                         <label
                                             htmlFor="shopper"
@@ -144,7 +141,7 @@ const RegisterView = ({ setActiveView }) => {
                                                     <ShoppingCart className="h-5 w-5 text-green-600" />
                                                 </div>
                                                 <div>
-                                                    <Label htmlFor="shopper" className="font-semibold cursor-pointer">
+                                                    <Label htmlFor="shopper">
                                                         Shopper
                                                     </Label>
                                                     <p className="text-xs text-gray-500">Find discounted food items</p>
@@ -171,7 +168,7 @@ const RegisterView = ({ setActiveView }) => {
                                                     <Store className="h-5 w-5 text-blue-600" />
                                                 </div>
                                                 <div>
-                                                    <Label htmlFor="retailer" className="font-semibold cursor-pointer">
+                                                    <Label htmlFor="retailer">
                                                         Retailer
                                                     </Label>
                                                     <p className="text-xs text-gray-500">List surplus food items</p>
@@ -198,7 +195,7 @@ const RegisterView = ({ setActiveView }) => {
                                                     <Heart className="h-5 w-5 text-red-600" />
                                                 </div>
                                                 <div>
-                                                    <Label htmlFor="charity" className="font-semibold cursor-pointer">
+                                                    <Label htmlFor="charity">
                                                         Charity
                                                     </Label>
                                                     <p className="text-xs text-gray-500">Collect food donations</p>
@@ -218,8 +215,8 @@ const RegisterView = ({ setActiveView }) => {
 
                         <Button
                             className="w-full h-12 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-                            type="submit"
-                            disabled={loading}
+                            variant='outline'
+                            onClick={handleSubmit}
                         >
                             {loading ? (
                                 <>

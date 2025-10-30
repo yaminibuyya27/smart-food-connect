@@ -14,7 +14,8 @@ const InventoryCard = ({
   onNotify,
   onLoginRequired,
   view,
-  renderAction // Optional: custom action button renderer
+  setActiveView,
+  renderAction = null // Optional: custom action button renderer
 }) => {
   const getItemCartQuantity = () => {
     const cartItem = cartItems.find(ci => ci.id === item.id);
@@ -24,7 +25,7 @@ const InventoryCard = ({
   const itemCartQuantity = getItemCartQuantity();
 
   const isExpiringSoon = (expiryDate) => {
-    const daysUntilExpiry = Math.ceil((new Date(expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil((new Date(expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     return daysUntilExpiry <= 3 && daysUntilExpiry > 0;
   };
 
@@ -60,7 +61,7 @@ const InventoryCard = ({
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (item) => {
     if (currentUser === null) {
       alert("Please login before adding items to the cart");
       if (onLoginRequired) {
@@ -78,7 +79,7 @@ const InventoryCard = ({
         onLoginRequired();
       }
     } else {
-      onNotify(currentUser, item);
+      onNotify(currentUser, item, setActiveView);
       alert(`✓ Notification set! We'll notify you when "${item.name}" is back in stock.`);
     }
   };
@@ -97,8 +98,8 @@ const InventoryCard = ({
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
-            e.target.src = '/placeholder-food.png';
-            e.target.onerror = null;
+            e.currentTarget.src = '/placeholder-food.png';
+            e.currentTarget.onerror = null;
           }}
         />
         <div className="absolute top-3 right-3 flex flex-col gap-2">
@@ -121,9 +122,9 @@ const InventoryCard = ({
 
       </div>
 
-      <CardHeader className="pb-3">
+      <CardHeader>
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-xl font-semibold line-clamp-2 flex-1">
+          <CardTitle>
             {item.name}
           </CardTitle>
           <div className="flex-shrink-0">
@@ -134,7 +135,7 @@ const InventoryCard = ({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-grow space-y-3 pt-0">
+      <CardContent>
         <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">
           {item.description}
         </p>
@@ -164,7 +165,7 @@ const InventoryCard = ({
         </div>
       </CardContent>
 
-      <CardFooter className="pt-4 border-t">
+      <CardFooter>
         {renderAction ? (
           renderAction(item)
         ) : item.available ? (
@@ -205,8 +206,8 @@ const InventoryCard = ({
           ) : (
             <Button 
               onClick={handleAddToCart}
+              variant="outline"
               className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-              size="lg"
             >
               <ShoppingBag className="h-4 w-4" />
               Add to Cart
@@ -217,7 +218,6 @@ const InventoryCard = ({
             variant="outline"
             onClick={handleNotifyClick}
             className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-            size="lg"
           >
             <Bell className="h-4 w-4" />
             {notifications.includes(item.id) ? "You'll be notified" : "Notify When Available"}

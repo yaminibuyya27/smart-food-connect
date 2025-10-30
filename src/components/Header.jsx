@@ -55,6 +55,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                 {currentUser.userType === "retailer" && (
                                     <Button 
                                         onClick={() => setActiveView("inventory")}
+                                        variant="outline"
                                         className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md"
                                     >
                                         <Plus className="h-4 w-4" />
@@ -84,6 +85,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                 <Button 
                                     onClick={() => setActiveView("register")}
                                     className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-md"
+                                    variant="outline"
                                 >
                                     <UserPlus className="h-4 w-4" />
                                     Sign Up
@@ -138,6 +140,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                             setMobileMenuOpen(false);
                                         }}
                                         className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md"
+                                        variant="outline"
                                     >
                                         <Plus className="h-4 w-4" />
                                         Add Inventory
@@ -175,6 +178,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
                                         setMobileMenuOpen(false);
                                     }}
                                     className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-md"
+                                    variant="outline"
                                 >
                                     <UserPlus className="h-4 w-4" />
                                     Sign Up

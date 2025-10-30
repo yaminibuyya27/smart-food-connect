@@ -192,9 +192,9 @@ const SmartFoodConnect = () => {
             case "register":
                 return <RegisterView setActiveView={setActiveView} />;
             case "charityBrowse":
-                return <CharityBrowseView currentUser={currentUser} addToCart={addToCart} setActiveView={setActiveView} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <CharityBrowseView currentUser={currentUser} addToCart={addToCart} setActiveView={setActiveView} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "userBrowse":
-                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "retailerBrowse":
                 return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "cart":

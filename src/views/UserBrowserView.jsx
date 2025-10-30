@@ -11,10 +11,11 @@ import { Loader2 } from 'lucide-react';
 import { handleNotification } from "../components/notifications";
 import { useInventory } from '../context/InventoryContext';
 
-const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
+const UserBrowseView = ({ currentUser, setActiveView, addToCart, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
   const { inventoryItems: rawInventoryItems, loading: isLoading } = useInventory();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  // @ts-ignore - Vite env variable
   const API_URL = import.meta.env.VITE_API_URL || '';
 
   const foodItems = rawInventoryItems.map(item => ({
@@ -29,7 +30,7 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
     type: item.type
   }));
 
-  const categories = [...new Set(foodItems.map(item => item.category))];
+  const categories = Array.from(new Set(foodItems.map(item => item.category)));
 
   const filteredFoodItems = foodItems
     .filter(item => {
@@ -104,6 +105,7 @@ const UserBrowseView = ({ currentUser, setActiveView, addToCart, addNotification
                     onNotify={handleNotification}
                     onLoginRequired={() => setActiveView('login')}
                     view='shopper'
+                    setActiveView={setActiveView}
                   />
                 ))}
               </div>

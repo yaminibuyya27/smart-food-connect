@@ -11,12 +11,14 @@ import InventoryCard from '../components/InventoryCard';
 import { Pencil, Loader2 } from 'lucide-react';
 import InventoryView from './InventoryView';
 import { useInventory } from '../context/InventoryContext';
+import { handleNotification } from '../components/notifications';
 
-const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
+const RetailerBrowserView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
   const { inventoryItems: rawInventoryItems, loading: isLoading, refetchInventory } = useInventory();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [itemToEdit, setItemToEdit] = useState(null);
+  // @ts-ignore - Vite env variable
   const API_URL = import.meta.env.VITE_API_URL || '';
 
   const foodItems = rawInventoryItems.map(item => ({
@@ -31,7 +33,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
     type: item.type
   }));
 
-  const categories = [...new Set(foodItems.map(item => item.category))];
+  const categories = Array.from(new Set(foodItems.map(item => item.category)));
 
   const filteredFoodItems = foodItems
     .filter(item => {
@@ -70,7 +72,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
     <Button 
       onClick={() => editItem(item)} 
       className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-      size="lg"
+      variant="outline"
     >
       <Pencil className="h-4 w-4" />
       Edit
@@ -130,10 +132,14 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addNotification, noti
                       currentUser={currentUser}
                       notifications={notifications}
                       cartItems={cartItems}
+                      onAddToCart={addToCart}
                       onUpdateQuantity={updateCartQuantity}
                       onRemoveFromCart={removeFromCart}
+                      onNotify={handleNotification}
+                      onLoginRequired={() => setActiveView('login')}
                       renderAction={renderEditAction}
                       view='retailer'
+                      setActiveView={setActiveView}
                     />
                   ))}
                 </div>
