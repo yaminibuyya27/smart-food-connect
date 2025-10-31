@@ -1,7 +1,7 @@
 import React from 'react';
 
-export const Button = ({ children, onClick, className, variant }) => (
-  <button onClick={onClick} className={`px-4 py-2 rounded ${className} ${variant === 'ghost' ? 'bg-transparent' : 'bg-blue-500 text-white'}`}>
+export const Button = ({ children, disabled = false, onClick, className, variant }) => (
+  <button onClick={onClick} disabled={disabled} className={`px-4 py-2 rounded ${className} ${variant === 'ghost' ? 'bg-transparent' : 'bg-blue-500 text-white'}`}>
     {children}
   </button>
 );

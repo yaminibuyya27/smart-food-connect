@@ -12,6 +12,7 @@ const InventoryCard = ({
   onUpdateQuantity,
   onRemoveFromCart,
   onNotify,
+  onAddNotification,
   onLoginRequired,
   view,
   setActiveView,
@@ -72,15 +73,18 @@ const InventoryCard = ({
     }
   };
 
-  const handleNotifyClick = () => {
+  const handleNotifyClick = async () => {
     if (currentUser === null) {
       alert("Please login before sending for notify");
       if (onLoginRequired) {
         onLoginRequired();
       }
     } else {
-      onNotify(currentUser, item, setActiveView);
-      alert(`✓ Notification set! We'll notify you when "${item.name}" is back in stock.`);
+      const success = await onNotify(currentUser, item, setActiveView);
+      if (success && onAddNotification) {
+        onAddNotification(item.id);
+        alert(`✓ Notification set! We'll notify you when "${item.name}" is back in stock.`);
+      }
     }
   };
 
@@ -217,7 +221,12 @@ const InventoryCard = ({
           <Button
             variant="outline"
             onClick={handleNotifyClick}
-            className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+            disabled={notifications.includes(item.id)}
+            className={`w-full inline-flex items-center justify-center gap-2 font-semibold shadow-md transition-all duration-200 ${
+              notifications.includes(item.id)
+                ? 'bg-gray-400 text-white cursor-not-allowed opacity-75'
+                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:shadow-lg transform hover:-translate-y-0.5'
+            }`}
           >
             <Bell className="h-4 w-4" />
             {notifications.includes(item.id) ? "You'll be notified" : "Notify When Available"}

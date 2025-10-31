@@ -136,6 +136,7 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addToCart, addNotific
                       onUpdateQuantity={updateCartQuantity}
                       onRemoveFromCart={removeFromCart}
                       onNotify={handleNotification}
+                      onAddNotification={addNotification}
                       onLoginRequired={() => setActiveView('login')}
                       renderAction={renderEditAction}
                       view='retailer'

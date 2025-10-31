@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react';
 import { handleNotification } from "../components/notifications";
 import { useInventory } from '../context/InventoryContext';
 
-const CharityBrowseView = ({ currentUser, setActiveView, addToCart, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
+const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotification, notifications, cartItems = [], updateCartQuantity, removeFromCart }) => {
     const { inventoryItems: rawInventoryItems, loading: isLoading } = useInventory();
     const [selectedCategory, setSelectedCategory] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
@@ -103,6 +103,7 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, notification
                       onUpdateQuantity={updateCartQuantity}
                       onRemoveFromCart={removeFromCart}
                       onNotify={handleNotification}
+                      onAddNotification={addNotification}
                       onLoginRequired={() => setActiveView('login')}
                       view='charity'
                       setActiveView={setActiveView}

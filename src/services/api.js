@@ -93,4 +93,13 @@ export const api = {
             throw error.response?.data || { message: 'Failed to send notification' };
         }
     },
+
+    getUserNotifications: async (userId) => {
+        try {
+            const response = await axios.get(`${API_URL}/api/notification/user/${userId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to fetch notifications' };
+        }
+    },
 };

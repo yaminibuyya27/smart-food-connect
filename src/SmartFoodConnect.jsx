@@ -23,13 +23,14 @@ const SmartFoodConnect = () => {
     useEffect(() => {
         const savedUser = localStorage.getItem('currentUser');
         const savedView = localStorage.getItem('activeView');
-        
+
         if (savedUser) {
             try {
                 const user = JSON.parse(savedUser);
                 setCurrentUser(user);
                 loadUserCart(user._id);
-                
+                loadUserNotifications(user._id);
+
                 if (savedView) {
                     setActiveView(savedView);
                 }
@@ -66,8 +67,35 @@ const SmartFoodConnect = () => {
         }
     };
 
+    const loadUserNotifications = async (userId) => {
+        try {
+            const response = await api.getUserNotifications(userId);
+            if (response && response.notifications) {
+                const itemIds = response.notifications.map(n => n.itemId);
+                setNotifications(itemIds);
+                localStorage.setItem('notifications', JSON.stringify(itemIds));
+            }
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+            // Load from localStorage as fallback
+            const savedNotifications = localStorage.getItem('notifications');
+            if (savedNotifications) {
+                try {
+                    const parsed = JSON.parse(savedNotifications);
+                    setNotifications(parsed);
+                } catch (e) {
+                    console.error('Failed to parse saved notifications:', e);
+                }
+            }
+        }
+    };
+
     const addNotification = (itemId) => {
-        setNotifications(prev => [...prev, itemId]);
+        setNotifications(prev => {
+            const updated = [...prev, itemId];
+            localStorage.setItem('notifications', JSON.stringify(updated));
+            return updated;
+        });
     };
 
     const removeFromCart = async (itemId) => {
@@ -87,6 +115,7 @@ const SmartFoodConnect = () => {
     useEffect(() => {
         if (currentUser?._id) {
             loadUserCart(currentUser._id);
+            loadUserNotifications(currentUser._id);
         }
     }, [currentUser]);
 
@@ -172,9 +201,11 @@ const SmartFoodConnect = () => {
     const handleLogout = async () => {
         setCurrentUser(null);
         setCartItems([]);
+        setNotifications([]);
         setActiveView("home");
         localStorage.removeItem('currentUser');
         localStorage.removeItem('activeView');
+        localStorage.removeItem('notifications');
     };
 
     const renderView = () => {
@@ -184,9 +215,9 @@ const SmartFoodConnect = () => {
             case "register":
                 return <RegisterView setActiveView={setActiveView} />;
             case "charityBrowse":
-                return <CharityBrowseView currentUser={currentUser} addToCart={addToCart} setActiveView={setActiveView} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <CharityBrowseView currentUser={currentUser} addToCart={addToCart} setActiveView={setActiveView} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "userBrowse":
-                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+                return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "retailerBrowse":
                 return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "cart":

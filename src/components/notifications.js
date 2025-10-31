@@ -4,7 +4,7 @@ export const handleNotification = async (currentUser, item, setActiveView) => {
     if(currentUser == null) {
         alert("Please login before sending the notification");
         setActiveView("login");
-        return;
+        return false;
     }
 
     const payload = {
@@ -16,8 +16,9 @@ export const handleNotification = async (currentUser, item, setActiveView) => {
       try {
         await api.createNotification(payload);
         alert("Notification has been sent")
-        // addNotification(item.id);
+        return true;
       } catch (error) {
         console.error("Failed to set notification:", error);
+        return false;
       }
     };

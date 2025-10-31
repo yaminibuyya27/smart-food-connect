@@ -5,7 +5,24 @@ import UserModel from '../models/user.js';
 
 const router = express.Router();
  
- router.post('/', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required.' });
+        }
+
+        const notifications = await NotificationModel.find({ userId });
+
+        res.status(200).json({ notifications });
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ error: 'Failed to fetch notifications.' });
+    }
+});
+
+router.post('/', async (req, res) => {
     // eslint-disable-next-line no-undef
     const email_user = process.env.EMAIL_USER;
     // eslint-disable-next-line no-undef
