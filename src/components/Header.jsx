@@ -7,7 +7,7 @@ const Header = ({ setActiveView, cartItemsCount, currentUser, handleLogout }) =>
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
-        <header className="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-200">
+        <header className="bg-white backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-200">
             <div className="container mx-auto px-4 py-4">
                 <div className="flex justify-between items-center">
 
