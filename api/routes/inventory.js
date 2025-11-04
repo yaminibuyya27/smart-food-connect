@@ -9,8 +9,8 @@ const upload = multer({ storage: storage });
 
 router.post('/', upload.single('image'), async (req, res) => {
     try {
-        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type } = req.body;
-        
+        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type, latitude, longitude } = req.body;
+
         const newItem = {
             product,
             quantity: Number(quantity),
@@ -23,7 +23,11 @@ router.post('/', upload.single('image'), async (req, res) => {
                 data: req.file.buffer,
                 contentType: req.file.mimetype
             } : undefined,
-            type
+            type,
+            location: (latitude && longitude) ? {
+                latitude: Number(latitude),
+                longitude: Number(longitude)
+            } : undefined
         };
 
         const savedItem = await InventoryModel.findOneAndUpdate(
@@ -33,14 +37,15 @@ router.post('/', upload.single('image'), async (req, res) => {
                 'price': price,
                 'expiryDate': expiryDate,
                 'type': type
-            }, 
+            },
             {
                 $inc: { quantity: Number(quantity) },
-                $set: { 
+                $set: {
                     available: newItem.available,
-                    image: newItem.image 
+                    image: newItem.image,
+                    location: newItem.location
                 }
-            }, 
+            },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
 
@@ -54,8 +59,8 @@ router.post('/', upload.single('image'), async (req, res) => {
 router.put('/:id', upload.single('image'), async (req, res) => {
     try {
         const { id } = req.params;
-        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type } = req.body;
-        
+        const { product, quantity, variant, additionalDetails, price, available, expiryDate, type, latitude, longitude } = req.body;
+
         const updateData = {
             product,
             quantity: Number(quantity),
@@ -66,6 +71,13 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             expiryDate,
             type
         };
+
+        if (latitude && longitude) {
+            updateData.location = {
+                latitude: Number(latitude),
+                longitude: Number(longitude)
+            };
+        }
 
         if (req.file) {
             updateData.image = {

@@ -27,7 +27,8 @@ const CharityBrowseView = ({ currentUser, setActiveView, addToCart, addNotificat
         category: item.variant,
         description: item.additionalDetails,
         quantity: item.quantity,
-        type: item.type
+        type: item.type,
+        location: item.location
     }));
 
     const categories = Array.from(new Set(foodItems.map(item => item.category)));
