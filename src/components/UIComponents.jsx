@@ -10,9 +10,9 @@ export const Card = ({ children, className }) => (
   <div className={`border rounded-lg shadow-sm ${className}`}>{children}</div>
 );
 
-export const CardHeader = ({ children }) => <div className="p-4 border-b">{children}</div>;
-export const CardContent = ({ children }) => <div className="p-4">{children}</div>;
-export const CardFooter = ({ children }) => <div className="p-4 border-t">{children}</div>;
+export const CardHeader = ({ children, className = '' }) => <div className={`p-4 border-b ${className}`}>{children}</div>;
+export const CardContent = ({ children, className = '' }) => <div className={`p-4 ${className}`}>{children}</div>;
+export const CardFooter = ({ children, className = '' }) => <div className={`p-4 border-t ${className}`}>{children}</div>;
 export const CardTitle = ({ children }) => <h2 className="text-xl font-bold">{children}</h2>;
 export const CardDescription = ({ children }) => <p className="text-gray-500">{children}</p>;
 

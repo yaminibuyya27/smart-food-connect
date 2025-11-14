@@ -2,6 +2,8 @@ import axios from 'axios';
 
 // @ts-ignore - Vite env variable
 const API_URL = import.meta.env.VITE_API_URL || '';
+// @ts-ignore - Vite env variable
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 export const api = {
     register: async (userData) => {
@@ -118,6 +120,39 @@ export const api = {
             return response.data;
         } catch (error) {
             throw error.response?.data || { message: 'Failed to fetch orders' };
+        }
+    },
+    geocodeAddress: async (address) => {
+        try {
+            const response = await axios.get(
+                'https://maps.googleapis.com/maps/api/geocode/json',
+                {
+                    params: {
+                        address: address,
+                        key: GOOGLE_MAPS_API_KEY
+                    }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to geocode address' };
+        }
+    },
+
+    reverseGeocode: async (latitude, longitude) => {
+        try {
+            const response = await axios.get(
+                'https://maps.googleapis.com/maps/api/geocode/json',
+                {
+                    params: {
+                        latlng: `${latitude},${longitude}`,
+                        key: GOOGLE_MAPS_API_KEY
+                    }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to reverse geocode' };
         }
     },
 };

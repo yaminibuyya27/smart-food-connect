@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Badge } from './UIComponents';
-import { ShoppingBag, Bell, Calendar, Package, Minus, Plus } from 'lucide-react';
+import { ShoppingBag, Bell, Calendar, Package, Minus, Plus, MapPin } from 'lucide-react';
+import MapModal from './MapModal';
 
 const InventoryCard = ({
   item,
@@ -18,6 +19,8 @@ const InventoryCard = ({
   setActiveView,
   renderAction = null // Optional: custom action button renderer
 }) => {
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
   const getItemCartQuantity = () => {
     const cartItem = cartItems.find(ci => ci.id === item.id);
     return cartItem ? (cartItem.cartQuantity || 1) : 0;
@@ -88,13 +91,14 @@ const InventoryCard = ({
     }
   };
 
-  const expiryStatus = isExpired(item.expiry) 
-    ? 'expired' 
-    : isExpiringSoon(item.expiry) 
-    ? 'expiring-soon' 
+  const expiryStatus = isExpired(item.expiry)
+    ? 'expired'
+    : isExpiringSoon(item.expiry)
+    ? 'expiring-soon'
     : 'fresh';
 
   return (
+    <>
     <Card className="flex flex-col overflow-hidden bg-white/95 backdrop-blur-sm border border-gray-200 shadow-lg hover:shadow-2xl hover:border-gray-300 hover:bg-white transition-all duration-300 group">
       <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
         <img
@@ -139,12 +143,12 @@ const InventoryCard = ({
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex-1 flex flex-col">
         <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">
           {item.description}
         </p>
 
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2 pt-2 flex-1">
           {item.type && view === 'retailer' && (
             <div className="flex items-center gap-2 text-sm">
               <Badge variant="default" className="text-xs">
@@ -166,10 +170,22 @@ const InventoryCard = ({
               Quantity: <span className="font-medium">{item.quantity}</span>
             </span>
           </div>
+
+          {item.location?.latitude && item.location?.longitude && (
+            <div className="mt-3">
+              <button
+                onClick={() => setIsMapModalOpen(true)}
+                className="w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors font-medium"
+              >
+                <MapPin className="h-4 w-4" />
+                View Store Location
+              </button>
+            </div>
+          )}
         </div>
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="mt-auto">
         {renderAction ? (
           renderAction(item)
         ) : item.available ? (
@@ -234,6 +250,17 @@ const InventoryCard = ({
         )}
       </CardFooter>
     </Card>
+
+    {item.location?.latitude && item.location?.longitude && (
+      <MapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        latitude={item.location.latitude}
+        longitude={item.location.longitude}
+        itemName={item.name}
+      />
+    )}
+    </>
   );
 };
 

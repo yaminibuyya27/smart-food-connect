@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { X, Upload, Package, DollarSign, Calendar, Tag, FileText, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Package, DollarSign, Calendar, Tag, FileText, Image as ImageIcon, MapPin } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
+import MapComponent from '../components/MapComponent';
 
 const InventoryView = ({
     mode = 'add', // 'add' or 'edit'
@@ -21,6 +22,8 @@ const InventoryView = ({
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState('');
     const [type, setType] = useState('shopper');
+    const [latitude, setLatitude] = useState('');
+    const [longitude, setLongitude] = useState('');
     const [originalData, setOriginalData] = useState(null);
 
     // @ts-ignore - Vite env variable
@@ -36,8 +39,10 @@ const InventoryView = ({
             setAvailable(itemToEdit.available ?? true);
             setExpiryDate(itemToEdit.expiry?.split('T')[0] || itemToEdit.expiryDate?.split('T')[0] || '');
             setType(itemToEdit.type || 'shopper');
+            setLatitude(itemToEdit.location?.latitude ? String(itemToEdit.location.latitude) : '');
+            setLongitude(itemToEdit.location?.longitude ? String(itemToEdit.location.longitude) : '');
             setPreviewUrl(`${API_URL}/api/inventory/image/${itemToEdit.id || itemToEdit._id}`);
-            
+
             setOriginalData({
                 product: itemToEdit.name || itemToEdit.product || '',
                 quantity: String(itemToEdit.quantity || ''),
@@ -46,7 +51,9 @@ const InventoryView = ({
                 price: String(itemToEdit.price || ''),
                 available: itemToEdit.available ?? true,
                 expiryDate: itemToEdit.expiry?.split('T')[0] || itemToEdit.expiryDate?.split('T')[0] || '',
-                type: itemToEdit.type || 'shopper'
+                type: itemToEdit.type || 'shopper',
+                latitude: itemToEdit.location?.latitude ? String(itemToEdit.location.latitude) : '',
+                longitude: itemToEdit.location?.longitude ? String(itemToEdit.location.longitude) : ''
             });
         }
     }, [mode, itemToEdit, API_URL]);
@@ -62,7 +69,7 @@ const InventoryView = ({
     const hasChanges = () => {
         if (mode === 'add') return true;
         if (!originalData) return false;
-        
+
         return (
             product !== originalData.product ||
             quantity !== originalData.quantity ||
@@ -72,6 +79,8 @@ const InventoryView = ({
             available !== originalData.available ||
             expiryDate !== originalData.expiryDate ||
             type !== originalData.type ||
+            latitude !== originalData.latitude ||
+            longitude !== originalData.longitude ||
             image !== null
         );
     };
@@ -97,6 +106,14 @@ const InventoryView = ({
             expiryDate,
             type
         };
+
+        if (latitude) {
+            payload.latitude = latitude;
+        }
+
+        if (longitude) {
+            payload.longitude = longitude;
+        }
 
         try {
             Object.keys(payload).forEach(key => {
@@ -140,6 +157,8 @@ const InventoryView = ({
         setImage(null);
         setPreviewUrl('');
         setType('shopper');
+        setLatitude('');
+        setLongitude('');
     };
 
     const handleCancel = () => {
@@ -255,13 +274,39 @@ const InventoryView = ({
                     <Calendar className="h-4 w-4 text-red-500" />
                     Expiry Date
                 </label>
-                <input 
-                    type="date" 
+                <input
+                    type="date"
                     className="w-full p-3 border-2 border-gray-200 rounded-lg bg-white focus:border-blue-500 focus:outline-none transition-colors cursor-pointer"
-                    value={expiryDate} 
-                    onChange={(e) => setExpiryDate(e.target.value)} 
-                    required 
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    required
                 />
+            </div>
+            <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <MapPin className="h-4 w-4 text-blue-500" />
+                    Store Location (Optional)
+                </label>
+                <MapComponent
+                    latitude={latitude && latitude !== '' ? Number(latitude) : null}
+                    longitude={longitude && longitude !== '' ? Number(longitude) : null}
+                    zoom={14}
+                    height="400px"
+                    editable={true}
+                    onLocationChange={(lat, lng) => {
+                        setLatitude(String(lat));
+                        setLongitude(String(lng));
+                    }}
+                />
+                {latitude && longitude && (
+                    <div className="mt-3 flex items-center gap-2 text-xs text-gray-700 bg-green-50 p-3 rounded-lg border border-green-200">
+                        <MapPin className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        <div>
+                            <strong className="text-green-700">Location Set:</strong>{' '}
+                            <span className="font-mono">{Number(latitude).toFixed(6)}, {Number(longitude).toFixed(6)}</span>
+                        </div>
+                    </div>
+                )}
             </div>
             <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -336,9 +381,15 @@ const InventoryView = ({
 
     if (mode === 'edit') {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-                <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                    <div className="sticky top-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-t-xl">
+            <div
+                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm overflow-hidden"
+                onClick={handleCancel}
+            >
+                <div
+                    className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] shadow-2xl flex flex-col overflow-hidden"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-t-xl shadow-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-bold">Edit Inventory Item</h2>
                             <button
@@ -349,7 +400,7 @@ const InventoryView = ({
                             </button>
                         </div>
                     </div>
-                    <div className="p-6">
+                    <div className="overflow-y-auto p-6 flex-1 overscroll-contain">
                         {formContent}
                     </div>
                 </div>

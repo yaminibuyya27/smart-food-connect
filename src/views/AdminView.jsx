@@ -3,10 +3,11 @@ import {
   Card,
   CardContent,
 } from '../components/UIComponents';
-import { LayoutDashboard, Users, FileText, Package, Bell, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Package, Bell, ShoppingCart, MapPin } from 'lucide-react';
 import AdminDashboardView from './AdminDashboardView';
 import AdminUserManagementView from './AdminUserManagementView';
 import AdminReportsView from './AdminReportsView';
+import MapComponent from '../components/MapComponent';
 import { useInventory } from '../context/InventoryContext';
 
 const AdminView = ({ currentUser }) => {
@@ -26,6 +27,7 @@ const AdminView = ({ currentUser }) => {
 
   const InventoryTab = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
 
     const filteredItems = inventoryItems.filter(item =>
       item.product.toLowerCase().includes(searchQuery.toLowerCase())
@@ -36,6 +38,7 @@ const AdminView = ({ currentUser }) => {
         <h1 className="text-3xl font-bold mb-6 flex items-center">
           <Package className="mr-2" /> Inventory Management
         </h1>
+
         <Card className="mb-4">
           <CardContent>
             <input
@@ -47,6 +50,7 @@ const AdminView = ({ currentUser }) => {
             />
           </CardContent>
         </Card>
+
         <Card className="">
           <CardContent>
             <div className="overflow-x-auto">
@@ -59,6 +63,7 @@ const AdminView = ({ currentUser }) => {
                     <th className="text-left py-3 px-4">Type</th>
                     <th className="text-left py-3 px-4">Expiry Date</th>
                     <th className="text-left py-3 px-4">Available</th>
+                    <th className="text-left py-3 px-4">Location</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -82,6 +87,19 @@ const AdminView = ({ currentUser }) => {
                           {item.available ? 'Yes' : 'No'}
                         </span>
                       </td>
+                      <td className="py-3 px-4">
+                        {item.location && item.location.latitude && item.location.longitude ? (
+                          <button
+                            onClick={() => setSelectedItem(item)}
+                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                          >
+                            <MapPin className="h-4 w-4" />
+                            View
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-sm">No location</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -94,6 +112,43 @@ const AdminView = ({ currentUser }) => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Location Details Modal */}
+        {selectedItem && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">{selectedItem.product}</h3>
+                  <p className="text-gray-600">Location Details</p>
+                </div>
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  <strong>Latitude:</strong> {selectedItem.location.latitude}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Longitude:</strong> {selectedItem.location.longitude}
+                </p>
+              </div>
+              <MapComponent
+                latitude={selectedItem.location.latitude}
+                longitude={selectedItem.location.longitude}
+                zoom={15}
+                height="400px"
+                editable={false}
+              />
+            </div>
+          </div>
+        )}
       </div>
     );
   };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from './services/api';
 import InventoryView from './views/InventoryView.jsx';
 import Header from './components/Header.jsx';
+import Footer from './components/Footer.jsx';
 import LoginView from './views/LoginView.jsx';
 import RegisterView from './views/RegisterView.jsx';
 import UserBrowseView from './views/UserBrowserView.jsx';
@@ -251,7 +252,7 @@ const SmartFoodConnect = () => {
                     {renderView()}
                 </main>
 
-                {/* Add Footer here */}
+                <Footer />
             </div>
         </InventoryProvider>
     );
