@@ -10,6 +10,7 @@ import HomeView from './views/HomeView.jsx';
 import CartView from './views/CartView.jsx';
 import CharityBrowseView from './views/CharityBrowserView.jsx';
 import RetailerBrowserView from './views/RetailerBrowserView.jsx';
+import AdminView from './views/AdminView.jsx';
 import { InventoryProvider } from './context/InventoryContext.jsx';
 
 
@@ -220,12 +221,14 @@ const SmartFoodConnect = () => {
                 return <UserBrowseView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
             case "retailerBrowse":
                 return <RetailerBrowserView currentUser={currentUser} setActiveView={setActiveView} addToCart={addToCart} addNotification={addNotification} notifications={notifications} cartItems={cartItems} updateCartQuantity={updateCartQuantity} removeFromCart={removeFromCart} />;
+            case "admin":
+                return <AdminView currentUser={currentUser} />;
             case "cart":
                 return <CartView items={cartItems} setActiveView={setActiveView} removeFromCart={removeFromCart} clearCart={clearCart} updateCartQuantity={updateCartQuantity} loading={loading} />;
-            case "inventory": 
+            case "inventory":
                 return <InventoryView />;
             case "checkout":
-                return <CheckoutView setActiveView={setActiveView} cartItems={cartItems} clearCart={clearCart} />;
+                return <CheckoutView setActiveView={setActiveView} cartItems={cartItems} clearCart={clearCart} currentUser={currentUser} />;
             default:
                 return <HomeView setActiveView={setActiveView} />;
         }

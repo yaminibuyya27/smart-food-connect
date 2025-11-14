@@ -59,6 +59,9 @@ const LoginView = ({ setCurrentUser, setActiveView, setCartItems }) => {
                 else if(response.user.userType === 'charity') {
                     setActiveView("charityBrowse");
                 }
+                else if(response.user.userType === 'admin') {
+                    setActiveView("admin");
+                }
 
             } else {
                 throw new Error('Invalid response from server');

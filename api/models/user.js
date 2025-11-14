@@ -16,8 +16,12 @@ const UserSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        enum: ['shopper', 'retailer', 'charity'],
+        enum: ['shopper', 'retailer', 'charity', 'admin'],
         required: true
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     },
     cart: {
         type: mongoose.Schema.Types.ObjectId,

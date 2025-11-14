@@ -4,12 +4,13 @@ import cors from 'cors'
 import dotenv from 'dotenv';
 
 import usersRoute from './routes/users.js';
-
+import adminRoute from './routes/admin.js';
 import itemsRoute from './routes/items.js';
 import donationsRoute from './routes/donations.js';
 import cartsRoute from './routes/carts.js';
 import inventoryRoute from './routes/inventory.js';
 import notificationRoute from './routes/notification.js';
+import ordersRoute from './routes/orders.js';
 import connectDB from './config/db.js';
 
 
@@ -27,11 +28,13 @@ connectDB();
 
 // Routes
 app.use('/api/users', usersRoute);
+app.use('/api/admin', adminRoute);
 app.use('/api/items', itemsRoute);
 app.use('/api/donations', donationsRoute);
 app.use('/api/carts', cartsRoute);
 app.use('/api/inventory', inventoryRoute);
 app.use('/api/notification', notificationRoute);
+app.use('/api/orders', ordersRoute);
 
  
  // test route

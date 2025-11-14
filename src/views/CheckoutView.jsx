@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '../components/UIComponents';
+import { api } from '../services/api';
 import {
     CreditCard,
     MapPin,
@@ -14,7 +14,7 @@ import {
     Calendar
 } from 'lucide-react';
 
-const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
+const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser }) => {
     const [step, setStep] = useState('shipping'); // 'shipping', 'payment', 'confirmation'
     const [loading, setLoading] = useState(false);
 
@@ -39,8 +39,8 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
 
     const [orderId, setOrderId] = useState('');
     const [orderTotal, setOrderTotal] = useState('0.00');
-    const [shippingErrors, setShippingErrors] = useState({});
-    const [paymentErrors, setPaymentErrors] = useState({});
+    const [shippingErrors, setShippingErrors] = useState({ fullName: '', email: '', phone: '', address: '', city: '', state: '', zipCode: '' });
+    const [paymentErrors, setPaymentErrors] = useState({ cardName: '', cardNumber: '', expiryDate: '', cvv: '' });
 
     // US States and their major cities
     const US_STATES = {
@@ -228,17 +228,47 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart }) => {
 
         setLoading(true);
 
-        setTimeout(() => {
-            const newOrderId = 'ORD-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11).toUpperCase();
-            setOrderId(newOrderId);
+        try {
+            const orderItems = cartItems.map(item => ({
+                itemId: item.id,
+                product: item.name,
+                quantity: item.cartQuantity || 1,
+                price: item.price
+            }));
 
-            const total = calculateTotal();
-            setOrderTotal(total);
+            const total = parseFloat(calculateTotal());
 
-            if (clearCart) clearCart();
-            setStep('confirmation');
+            const orderData = {
+                userId: currentUser._id,
+                items: orderItems,
+                totalAmount: total,
+                paymentMethod: paymentInfo.paymentMethod === 'credit' ? 'card' : 'card',
+                shippingAddress: {
+                    street: shippingInfo.address,
+                    city: shippingInfo.city,
+                    state: shippingInfo.state,
+                    zipCode: shippingInfo.zipCode,
+                    country: shippingInfo.country
+                },
+                status: 'confirmed'
+            };
+
+            const response = await api.createOrder(orderData);
+
+            if (response && response.order) {
+                setOrderId(response.order._id);
+                setOrderTotal(total.toFixed(2));
+
+                if (clearCart) clearCart();
+
+                setStep('confirmation');
+            }
+        } catch (error) {
+            console.error('Error creating order:', error);
+            alert('Failed to create order. Please try again.');
+        } finally {
             setLoading(false);
-        }, 2000);
+        }
     };
 
     const formatPhoneNumber = (value) => {

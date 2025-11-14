@@ -102,4 +102,22 @@ export const api = {
             throw error.response?.data || { message: 'Failed to fetch notifications' };
         }
     },
+
+    createOrder: async (orderData) => {
+        try {
+            const response = await axios.post(`${API_URL}/api/orders`, orderData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to create order' };
+        }
+    },
+
+    getUserOrders: async (userId) => {
+        try {
+            const response = await axios.get(`${API_URL}/api/orders/user/${userId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to fetch orders' };
+        }
+    },
 };
