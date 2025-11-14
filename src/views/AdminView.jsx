@@ -9,6 +9,7 @@ import AdminUserManagementView from './AdminUserManagementView';
 import AdminReportsView from './AdminReportsView';
 import MapComponent from '../components/MapComponent';
 import { useInventory } from '../context/InventoryContext';
+import { api } from '../services/api';
 
 const AdminView = ({ currentUser }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -28,10 +29,35 @@ const AdminView = ({ currentUser }) => {
   const InventoryTab = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
+    const [locationAddress, setLocationAddress] = useState('');
+    const [loadingAddress, setLoadingAddress] = useState(false);
 
     const filteredItems = inventoryItems.filter(item =>
       item.product.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const fetchAddress = async (latitude, longitude) => {
+      setLoadingAddress(true);
+      setLocationAddress('');
+      try {
+        const data = await api.reverseGeocode(latitude, longitude);
+        if (data.results?.[0]) {
+          setLocationAddress(data.results[0].formatted_address);
+        } else {
+          setLocationAddress('Address not available');
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error);
+        setLocationAddress('Unable to fetch address');
+      } finally {
+        setLoadingAddress(false);
+      }
+    };
+
+    const handleViewLocation = (item) => {
+      setSelectedItem(item);
+      fetchAddress(item.location.latitude, item.location.longitude);
+    };
 
     return (
       <div className="container mx-auto p-6">
@@ -90,7 +116,7 @@ const AdminView = ({ currentUser }) => {
                       <td className="py-3 px-4">
                         {item.location && item.location.latitude && item.location.longitude ? (
                           <button
-                            onClick={() => setSelectedItem(item)}
+                            onClick={() => handleViewLocation(item)}
                             className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
                           >
                             <MapPin className="h-4 w-4" />
@@ -123,7 +149,10 @@ const AdminView = ({ currentUser }) => {
                   <p className="text-gray-600">Location Details</p>
                 </div>
                 <button
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => {
+                    setSelectedItem(null);
+                    setLocationAddress('');
+                  }}
                   className="text-gray-500 hover:text-gray-700"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -131,6 +160,24 @@ const AdminView = ({ currentUser }) => {
                   </svg>
                 </button>
               </div>
+
+              {loadingAddress ? (
+                <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                  <span className="text-sm text-blue-800">Loading address...</span>
+                </div>
+              ) : locationAddress ? (
+                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-green-900 mb-1">Address</p>
+                      <p className="text-gray-700 text-sm">{locationAddress}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
                   <strong>Latitude:</strong> {selectedItem.location.latitude}
