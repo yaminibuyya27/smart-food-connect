@@ -1,17 +1,7 @@
 import express from 'express'
 import UserModel from '../models/user.js'
-import auth from '../middleware/auth.js'
 
 const router = express.Router();
-
-router.get('/verify', auth, async (req, res) => {
-    try {
-        const user = await UserModel.findById(req.user.id).select('-password');
-        res.json({ user });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
 
 router.post('/register', async (req, res) => {
   try {
