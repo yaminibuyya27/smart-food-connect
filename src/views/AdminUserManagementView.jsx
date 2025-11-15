@@ -162,32 +162,33 @@ const AdminUserManagementView = ({ currentUser }) => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2 flex items-center">
-          <Users className="mr-2" /> User Management
+    <div className="container mx-auto p-3 sm:p-4 md:p-6">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center">
+          <Users className="mr-2 h-6 w-6 sm:h-8 sm:w-8" />
+          <span className="hidden sm:inline">User Management</span>
+          <span className="sm:hidden">Users</span>
         </h1>
-        <p className="text-gray-600">Manage all platform users</p>
+        <p className="text-sm sm:text-base text-gray-600">Manage all platform users</p>
       </div>
 
-      {/* Filters and Search */}
-      <Card className="mb-6">
+      <Card className="mb-4 sm:mb-6">
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users by name or email..."
+                placeholder="Search users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               <option value="all">All Users</option>
               <option value="shopper">Shoppers</option>
@@ -199,41 +200,40 @@ const AdminUserManagementView = ({ currentUser }) => {
         </CardContent>
       </Card>
 
-      {/* Edit User Modal */}
       {editingUser && (
-        <Card className="mb-6 border-2 border-blue-500">
+        <Card className="mb-4 sm:mb-6 border-2 border-blue-500">
           <CardHeader>
-            <CardTitle>Edit User: {editingUser.name}</CardTitle>
-            <CardDescription>Update user information</CardDescription>
+            <CardTitle className="text-base sm:text-lg">Edit User: {editingUser.name}</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Update user information</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleUpdate} className="space-y-4">
+            <form onSubmit={handleUpdate} className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2">Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2">Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">User Type</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2">User Type</label>
                 <select
                   value={formData.userType}
                   onChange={(e) => setFormData({ ...formData, userType: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   required
                 >
                   <option value="shopper">Shopper</option>
@@ -241,17 +241,17 @@ const AdminUserManagementView = ({ currentUser }) => {
                   <option value="charity">Charity</option>
                 </select>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base"
                 >
                   Update User
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 text-sm sm:text-base"
                 >
                   Cancel
                 </button>
@@ -261,73 +261,78 @@ const AdminUserManagementView = ({ currentUser }) => {
         </Card>
       )}
 
-      {/* Users List */}
       <Card className="">
         <CardHeader>
-          <CardTitle>Users ({filteredUsers.length})</CardTitle>
-          <CardDescription>
-            Total: {users.length} users | Showing: {filteredUsers.length} users
+          <CardTitle className="text-base sm:text-lg">Users ({filteredUsers.length})</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
+            Total: {users.length} | Showing: {filteredUsers.length}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-3 px-4">Name</th>
-                  <th className="text-left py-3 px-4">Email</th>
-                  <th className="text-left py-3 px-4">Type</th>
-                  <th className="text-left py-3 px-4">Status</th>
-                  <th className="text-left py-3 px-4">Joined</th>
-                  <th className="text-left py-3 px-4">Actions</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm">Name</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm hidden md:table-cell">Email</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm">Type</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm">Status</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm hidden lg:table-cell">Joined</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
                   <tr key={user._id} className={`border-b hover:bg-gray-50 ${!user.isActive ? 'opacity-60' : ''}`}>
-                    <td className="py-3 px-4 font-medium">{user.name}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.email}</td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getUserTypeColor(user.userType)}`}>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 font-medium text-xs sm:text-sm">
+                      <div>
+                        {user.name}
+                        <span className="md:hidden block text-xs text-gray-500 font-normal">{user.email}</span>
+                      </div>
+                    </td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-600 text-xs sm:text-sm hidden md:table-cell">{user.email}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4">
+                      <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${getUserTypeColor(user.userType)}`}>
                         {user.userType}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4">
+                      <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                         {user.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-600">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-gray-600 text-xs sm:text-sm hidden lg:table-cell">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4">
                       {user.userType !== 'admin' ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 sm:gap-2">
                           <button
                             onClick={() => handleEdit(user)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                            className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded"
                             title="Edit user"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </button>
                           <button
                             onClick={() => handleToggleStatus(user._id, user.name, user.isActive)}
-                            className={`p-2 ${user.isActive ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'} rounded`}
+                            className={`p-1.5 sm:p-2 ${user.isActive ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'} rounded`}
                             title={user.isActive ? 'Deactivate user' : 'Activate user'}
                           >
-                            {user.isActive ? <UserX className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                            {user.isActive ? <UserX className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
                           </button>
                           <button
                             onClick={() => handleDelete(user._id, user.name)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded"
+                            className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded"
                             title="Delete user"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-gray-400 text-sm flex items-center">
-                          <UserCheck className="h-4 w-4 mr-1" /> Protected
+                        <span className="text-gray-400 text-xs sm:text-sm flex items-center">
+                          <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
+                          <span className="hidden sm:inline">Protected</span>
                         </span>
                       )}
                     </td>
@@ -336,7 +341,7 @@ const AdminUserManagementView = ({ currentUser }) => {
               </tbody>
             </table>
             {filteredUsers.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-500 text-sm">
                 No users found matching your criteria
               </div>
             )}

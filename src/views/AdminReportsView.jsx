@@ -109,27 +109,27 @@ const AdminReportsView = ({ currentUser }) => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2 flex items-center">
-          <FileText className="mr-2" /> Reports
+    <div className="container mx-auto p-3 sm:p-4 md:p-6">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center">
+          <FileText className="mr-2 h-6 w-6 sm:h-8 sm:w-8" /> Reports
         </h1>
-        <p className="text-gray-600">Generate and download platform reports</p>
+        <p className="text-sm sm:text-base text-gray-600">Generate and download platform reports</p>
       </div>
 
-      <Card className="mb-6">
+      <Card className="mb-4 sm:mb-6">
         <CardHeader>
-          <CardTitle>Generate Report</CardTitle>
-          <CardDescription>Select report type and date range</CardDescription>
+          <CardTitle className="text-base sm:text-lg">Generate Report</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Select report type and date range</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Report Type</label>
+              <label className="block text-xs sm:text-sm font-medium mb-2">Report Type</label>
               <select
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               >
                 <option value="users">Users Report</option>
                 <option value="inventory">Inventory Report</option>
@@ -138,32 +138,32 @@ const AdminReportsView = ({ currentUser }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2 flex items-center">
-                <Calendar className="h-4 w-4 mr-1" /> Start Date
+              <label className="block text-xs sm:text-sm font-medium mb-2 flex items-center">
+                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" /> Start Date
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2 flex items-center">
-                <Calendar className="h-4 w-4 mr-1" /> End Date
+              <label className="block text-xs sm:text-sm font-medium mb-2 flex items-center">
+                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" /> End Date
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
             <div className="flex items-end">
               <button
                 onClick={generateReport}
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+                className="w-full px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 text-sm sm:text-base"
               >
                 {loading ? 'Generating...' : 'Generate Report'}
               </button>
@@ -175,106 +175,106 @@ const AdminReportsView = ({ currentUser }) => {
       {reportData && (
         <Card className="">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:items-center">
               <div>
-                <CardTitle>{reportData.type}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base sm:text-lg">{reportData.type}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                   Generated on {new Date(reportData.generatedAt).toLocaleString()}
                 </CardDescription>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={downloadCSV}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                  className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center text-xs sm:text-sm"
                 >
-                  <Download className="h-4 w-4 mr-2" /> CSV
+                  <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" /> CSV
                 </button>
                 <button
                   onClick={downloadReport}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+                  className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center text-xs sm:text-sm"
                 >
-                  <Download className="h-4 w-4 mr-2" /> JSON
+                  <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" /> JSON
                 </button>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold mb-3">Summary</h3>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <h3 className="font-semibold mb-3 text-sm sm:text-base">Summary</h3>
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {reportType === 'users' && (
                   <>
                     <div>
-                      <p className="text-sm text-gray-600">Total Users</p>
-                      <p className="text-2xl font-bold">{reportData.totalUsers}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
+                      <p className="text-xl sm:text-2xl font-bold">{reportData.totalUsers}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Shoppers</p>
-                      <p className="text-2xl font-bold text-green-600">{reportData.breakdown.shoppers}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Shoppers</p>
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">{reportData.breakdown.shoppers}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Retailers</p>
-                      <p className="text-2xl font-bold text-blue-600">{reportData.breakdown.retailers}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Retailers</p>
+                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{reportData.breakdown.retailers}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Charities</p>
-                      <p className="text-2xl font-bold text-red-600">{reportData.breakdown.charities}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Charities</p>
+                      <p className="text-xl sm:text-2xl font-bold text-red-600">{reportData.breakdown.charities}</p>
                     </div>
                   </>
                 )}
                 {reportType === 'inventory' && (
                   <>
                     <div>
-                      <p className="text-sm text-gray-600">Total Items</p>
-                      <p className="text-2xl font-bold">{reportData.totalItems}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Items</p>
+                      <p className="text-xl sm:text-2xl font-bold">{reportData.totalItems}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Total Value</p>
-                      <p className="text-2xl font-bold text-green-600">${reportData.totalValue}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Value</p>
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">${reportData.totalValue}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Available</p>
-                      <p className="text-2xl font-bold text-blue-600">{reportData.breakdown.available}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Available</p>
+                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{reportData.breakdown.available}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">For Charity</p>
-                      <p className="text-2xl font-bold text-red-600">{reportData.breakdown.charityItems}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">For Charity</p>
+                      <p className="text-xl sm:text-2xl font-bold text-red-600">{reportData.breakdown.charityItems}</p>
                     </div>
                   </>
                 )}
                 {reportType === 'notifications' && (
                   <>
                     <div>
-                      <p className="text-sm text-gray-600">Total Notifications</p>
-                      <p className="text-2xl font-bold">{reportData.totalNotifications}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Notifications</p>
+                      <p className="text-xl sm:text-2xl font-bold">{reportData.totalNotifications}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Sent</p>
-                      <p className="text-2xl font-bold text-green-600">{reportData.breakdown.sent}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Sent</p>
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">{reportData.breakdown.sent}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Pending</p>
-                      <p className="text-2xl font-bold text-orange-600">{reportData.breakdown.pending}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Pending</p>
+                      <p className="text-xl sm:text-2xl font-bold text-orange-600">{reportData.breakdown.pending}</p>
                     </div>
                   </>
                 )}
                 {reportType === 'orders' && (
                   <>
                     <div>
-                      <p className="text-sm text-gray-600">Total Orders</p>
-                      <p className="text-2xl font-bold">{reportData.totalOrders}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Orders</p>
+                      <p className="text-xl sm:text-2xl font-bold">{reportData.totalOrders}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Total Value</p>
-                      <p className="text-2xl font-bold text-green-600">${reportData.totalOrderValue}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Value</p>
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">${reportData.totalOrderValue}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Pending</p>
-                      <p className="text-2xl font-bold text-orange-600">{reportData.ordersByStatus?.pending || 0}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Pending</p>
+                      <p className="text-xl sm:text-2xl font-bold text-orange-600">{reportData.ordersByStatus?.pending || 0}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Completed</p>
-                      <p className="text-2xl font-bold text-green-600">{reportData.ordersByStatus?.completed || 0}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Completed</p>
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">{reportData.ordersByStatus?.completed || 0}</p>
                     </div>
                   </>
                 )}
@@ -282,16 +282,16 @@ const AdminReportsView = ({ currentUser }) => {
             </div>
 
             {reportData.dateRange && (
-              <div className="mb-4 text-sm text-gray-600">
+              <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">
                 <strong>Date Range:</strong>{' '}
                 {reportData.dateRange.startDate || 'All time'} to{' '}
                 {reportData.dateRange.endDate || 'Present'}
               </div>
             )}
 
-            <div className="mt-4">
-              <h3 className="font-semibold mb-2">Data Preview</h3>
-              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto max-h-96">
+            <div className="mt-3 sm:mt-4">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Data Preview</h3>
+              <div className="bg-gray-100 p-3 sm:p-4 rounded-lg overflow-x-auto max-h-64 sm:max-h-96">
                 <pre className="text-xs">{JSON.stringify(reportData, null, 2)}</pre>
               </div>
             </div>
@@ -302,8 +302,10 @@ const AdminReportsView = ({ currentUser }) => {
       {!reportData && !loading && (
         <Card className="">
           <CardContent>
-            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <p>Select a report type and click Generate Report to view data</p>
+            <div className="text-center py-8">
+              <FileText className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-sm sm:text-base text-gray-600">Select a report type and click Generate Report to view data</p>
+            </div>
           </CardContent>
         </Card>
       )}

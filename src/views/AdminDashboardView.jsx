@@ -52,32 +52,34 @@ const AdminDashboardView = ({ currentUser }) => {
   const StatCard = ({ title, value, icon: Icon, color, description }) => (
     <Card className="">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
+        <CardTitle className="text-sm sm:text-base">{title}</CardTitle>
+        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${color}`} />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-xl sm:text-2xl font-bold">{value}</div>
         {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+          <p className="text-xs text-muted-foreground mt-1 hidden sm:block">{description}</p>
         )}
       </CardContent>
     </Card>
   );
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-        <p className="text-gray-600">Overview of Smart Food Connect platform</p>
+    <div className="container mx-auto p-3 sm:p-4 md:p-6">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p className="text-sm sm:text-base text-gray-600">Overview of Smart Food Connect platform</p>
       </div>
 
       {stats && (
         <>
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <Users className="mr-2" /> User Statistics
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center">
+              <Users className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="hidden sm:inline">User Statistics</span>
+              <span className="sm:hidden">Users</span>
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Users"
                 value={stats.users.total}
@@ -109,11 +111,13 @@ const AdminDashboardView = ({ currentUser }) => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <Package className="mr-2" /> Inventory Statistics
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center">
+              <Package className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="hidden sm:inline">Inventory Statistics</span>
+              <span className="sm:hidden">Inventory</span>
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Items"
                 value={stats.inventory.total}
@@ -145,11 +149,13 @@ const AdminDashboardView = ({ currentUser }) => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <TrendingUp className="mr-2" /> Activity Statistics
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center">
+              <TrendingUp className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="hidden sm:inline">Activity Statistics</span>
+              <span className="sm:hidden">Activity</span>
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Carts"
                 value={stats.carts.total}
@@ -181,11 +187,13 @@ const AdminDashboardView = ({ currentUser }) => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <FileText className="mr-2" /> Order Statistics
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center">
+              <FileText className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="hidden sm:inline">Order Statistics</span>
+              <span className="sm:hidden">Orders</span>
             </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               <StatCard
                 title="Total Orders"
                 value={stats.orders.total}
@@ -212,30 +220,30 @@ const AdminDashboardView = ({ currentUser }) => {
 
           <Card className="">
             <CardHeader>
-              <CardTitle>Platform Overview</CardTitle>
-              <CardDescription>Key metrics at a glance</CardDescription>
+              <CardTitle className="text-base sm:text-lg">Platform Overview</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Key metrics at a glance</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                  <span className="font-medium">User Engagement Rate</span>
-                  <span className="text-green-600 font-semibold">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 sm:p-3 bg-gray-50 rounded gap-1">
+                  <span className="font-medium text-sm sm:text-base">User Engagement Rate</span>
+                  <span className="text-green-600 font-semibold text-sm sm:text-base">
                     {stats.carts.total > 0
                       ? ((stats.carts.withItems / stats.carts.total) * 100).toFixed(1)
                       : 0}%
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                  <span className="font-medium">Inventory Availability</span>
-                  <span className="text-green-600 font-semibold">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 sm:p-3 bg-gray-50 rounded gap-1">
+                  <span className="font-medium text-sm sm:text-base">Inventory Availability</span>
+                  <span className="text-green-600 font-semibold text-sm sm:text-base">
                     {stats.inventory.total > 0
                       ? ((stats.inventory.available / stats.inventory.total) * 100).toFixed(1)
                       : 0}%
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                  <span className="font-medium">Items Expiring Soon</span>
-                  <span className={`font-semibold ${stats.inventory.expiringSoon > 0 ? 'text-orange-600' : 'text-green-600'}`}>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 sm:p-3 bg-gray-50 rounded gap-1">
+                  <span className="font-medium text-sm sm:text-base">Items Expiring Soon</span>
+                  <span className={`font-semibold text-sm sm:text-base ${stats.inventory.expiringSoon > 0 ? 'text-orange-600' : 'text-green-600'}`}>
                     {stats.inventory.expiringSoon} items
                   </span>
                 </div>
