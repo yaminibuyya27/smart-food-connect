@@ -7,9 +7,12 @@ const InventoryContext = createContext({
   error: null,
   lastFetch: null,
   refetchInventory: () => {},
-  updateInventoryItem: () => {},
-  addInventoryItem: () => {},
-  removeInventoryItem: () => {},
+  // eslint-disable-next-line no-unused-vars
+  updateInventoryItem: (_itemId, _updates) => {},
+  // eslint-disable-next-line no-unused-vars
+  addInventoryItem: (_newItem) => {},
+  // eslint-disable-next-line no-unused-vars
+  removeInventoryItem: (_itemId) => {},
 });
 
 export const InventoryProvider = ({ children }) => {

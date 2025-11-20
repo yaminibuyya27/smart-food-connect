@@ -10,7 +10,7 @@ const InventoryView = ({
     onClose = null,
     onSuccess = null
 }) => {
-    const { refetchInventory } = useInventory();
+    const { updateInventoryItem, addInventoryItem } = useInventory();
     const [product, setProduct] = useState('');
     const [quantity, setQuantity] = useState('');
     const [variant, setVariant] = useState('');
@@ -125,14 +125,24 @@ const InventoryView = ({
             }
 
             if (mode === 'edit') {
-                await api.updateInventoryItem(itemToEdit.id || itemToEdit._id, formData);
-                await refetchInventory();
+                const response = await api.updateInventoryItem(itemToEdit.id || itemToEdit._id, formData);
+
+                // Optimistic update: update only the edited item in context
+                if (response.item) {
+                    updateInventoryItem(itemToEdit.id || itemToEdit._id, response.item);
+                }
+
                 alert('Inventory item updated successfully');
                 if (onSuccess) onSuccess();
                 if (onClose) onClose();
             } else {
-                await api.createInventory(formData);
-                await refetchInventory();
+                const response = await api.createInventory(formData);
+
+                // Optimistic update: add the new item to context
+                if (response.item) {
+                    addInventoryItem(response.item);
+                }
+
                 alert('Inventory item added successfully');
 
                 resetForm();

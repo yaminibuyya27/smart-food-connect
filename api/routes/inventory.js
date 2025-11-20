@@ -42,6 +42,7 @@ router.post('/', upload.single('image'), async (req, res) => {
                 $inc: { quantity: Number(quantity) },
                 $set: {
                     available: newItem.available,
+                    additionalDetails: newItem.additionalDetails,
                     image: newItem.image,
                     location: newItem.location
                 }
