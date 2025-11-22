@@ -37,13 +37,6 @@ const RetailerBrowserView = ({ currentUser, setActiveView, addToCart, addNotific
   const categories = Array.from(new Set(foodItems.map(item => item.category)));
 
   const filteredFoodItems = foodItems
-    .filter(item => {
-      const expiryDate = new Date(item.expiry);
-      const today = new Date();
-      const diffTime = expiryDate.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays >= 3;
-    })
     .filter(item => !selectedCategory || item.category === selectedCategory)
     .filter(item =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
