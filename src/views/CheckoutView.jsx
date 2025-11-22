@@ -19,8 +19,8 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
     const [loading, setLoading] = useState(false);
 
     const [shippingInfo, setShippingInfo] = useState({
-        fullName: '',
-        email: '',
+        fullName: currentUser?.name || '',
+        email: currentUser?.email || '',
         phone: '',
         address: '',
         city: '',
@@ -31,7 +31,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
 
     const [paymentInfo, setPaymentInfo] = useState({
         cardNumber: '',
-        cardName: '',
+        cardName: currentUser?.name || '',
         expiryDate: '',
         cvv: '',
         paymentMethod: 'credit' // 'credit', 'debit'
@@ -103,8 +103,20 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
         return US_STATES[shippingInfo.state].cities;
     };
 
+    const isCharityItem = (item) => {
+        return item.type === 'charity';
+    };
+
+    const hasOnlyCharityItems = () => {
+        return cartItems.length > 0 && cartItems.every(item => isCharityItem(item));
+    };
+
     const calculateTotal = () => {
-        return cartItems.reduce((total, item) => total + (item.price * (item.cartQuantity || 1)), 0).toFixed(2);
+        return cartItems.reduce((total, item) => {
+            // Charity items are free
+            const itemPrice = isCharityItem(item) ? 0 : item.price;
+            return total + (itemPrice * (item.cartQuantity || 1));
+        }, 0).toFixed(2);
     };
 
     const validateShipping = () => {
@@ -207,13 +219,62 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
         return errors;
     };
 
-    const handleShippingSubmit = (e) => {
+    const handleShippingSubmit = async (e) => {
         e.preventDefault();
         const errors = validateShipping();
         setShippingErrors(errors);
 
         if (Object.keys(errors).length === 0) {
-            setStep('payment');
+            // Skip payment for charity-only orders
+            if (hasOnlyCharityItems()) {
+                await handleCharityOrderSubmit();
+            } else {
+                setStep('payment');
+            }
+        }
+    };
+
+    const handleCharityOrderSubmit = async () => {
+        setLoading(true);
+
+        try {
+            const orderItems = cartItems.map(item => ({
+                itemId: item.id,
+                product: item.name,
+                quantity: item.cartQuantity || 1,
+                price: 0 // Charity items are free
+            }));
+
+            const orderData = {
+                userId: currentUser._id,
+                items: orderItems,
+                totalAmount: 0,
+                paymentMethod: 'donation', // Special payment method for charity items
+                shippingAddress: {
+                    street: shippingInfo.address,
+                    city: shippingInfo.city,
+                    state: shippingInfo.state,
+                    zipCode: shippingInfo.zipCode,
+                    country: shippingInfo.country
+                },
+                status: 'completed'
+            };
+
+            const response = await api.createOrder(orderData);
+
+            if (response && response.order) {
+                setOrderId(response.order._id);
+                setOrderTotal('0.00');
+
+                if (clearCart) clearCart();
+
+                setStep('confirmation');
+            }
+        } catch (error) {
+            console.error('Error creating charity order:', error);
+            alert('Failed to create order. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -233,7 +294,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
                 itemId: item.id,
                 product: item.name,
                 quantity: item.cartQuantity || 1,
-                price: item.price
+                price: isCharityItem(item) ? 0 : item.price // Charity items are free
             }));
 
             const total = parseFloat(calculateTotal());
@@ -250,7 +311,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
                     zipCode: shippingInfo.zipCode,
                     country: shippingInfo.country
                 },
-                status: 'confirmed'
+                status: 'completed'
             };
 
             const response = await api.createOrder(orderData);
@@ -354,7 +415,7 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
                             <Button
                                 onClick={() => setActiveView("home")}
                                 variant="outline"
-                                className="w-full border-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+                                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                             >
                                 Back to Home
                             </Button>
@@ -604,12 +665,33 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
                                         </div>
                                     </div>
 
+                                    {hasOnlyCharityItems() && (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                                            <p className="text-sm text-green-800 font-semibold">
+                                                🎁 You're receiving charity items - No payment required!
+                                            </p>
+                                            <p className="text-xs text-green-700 mt-1">
+                                                Just confirm your delivery address to complete your order.
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <Button
                                         onClick={handleShippingSubmit}
+                                        disabled={loading}
                                         className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                                         variant='outline'
                                     >
-                                        Continue to Payment
+                                        {loading ? (
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                                                Processing...
+                                            </div>
+                                        ) : hasOnlyCharityItems() ? (
+                                            'Complete Order'
+                                        ) : (
+                                            'Continue to Payment'
+                                        )}
                                     </Button>
                                 </form>
                             )}
@@ -793,27 +875,38 @@ const CheckoutView = ({ setActiveView, cartItems = [], clearCart, currentUser })
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                                    {cartItems.map((item) => (
-                                        <div key={item.id} className="flex gap-3 pb-3 border-b">
-                                            <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                                <img
-                                                // @ts-ignore - Vite env variable
-                                                    src={`${import.meta.env.VITE_API_URL || ''}/api/inventory/image/${item.id}`}
-                                                    alt={item.name}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => {
-                                                        e.currentTarget.src = '/placeholder-food.png';
-                                                        e.currentTarget.onerror = null;
-                                                    }}
-                                                />
+                                    {cartItems.map((item) => {
+                                        const itemPrice = isCharityItem(item) ? 0 : item.price;
+                                        const itemTotal = (itemPrice * (item.cartQuantity || 1)).toFixed(2);
+                                        return (
+                                            <div key={item.id} className="flex gap-3 pb-3 border-b">
+                                                <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                                    <img
+                                                    // @ts-ignore - Vite env variable
+                                                        src={`${import.meta.env.VITE_API_URL || ''}/api/inventory/image/${item.id}`}
+                                                        alt={item.name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            e.currentTarget.src = '/placeholder-food.png';
+                                                            e.currentTarget.onerror = null;
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-semibold text-sm text-gray-800 truncate">{item.name}</h4>
+                                                    <p className="text-xs text-gray-600">Qty: {item.cartQuantity || 1}</p>
+                                                    {isCharityItem(item) ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-sm font-bold text-green-600">FREE</p>
+                                                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">Charity</span>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-sm font-bold text-green-600">${itemTotal}</p>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="font-semibold text-sm text-gray-800 truncate">{item.name}</h4>
-                                                <p className="text-xs text-gray-600">Qty: {item.cartQuantity || 1}</p>
-                                                <p className="text-sm font-bold text-green-600">${(item.price * (item.cartQuantity || 1)).toFixed(2)}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                                 <div className="pt-3 border-t">

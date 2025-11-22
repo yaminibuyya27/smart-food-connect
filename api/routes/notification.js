@@ -1,7 +1,7 @@
 import express from 'express'
-import nodemailer from 'nodemailer'
 import NotificationModel from '../models/notification.js';
 import UserModel from '../models/user.js';
+import { createEmailTransporter } from '../services/emailService.js';
 
 const router = express.Router();
  
@@ -25,18 +25,8 @@ router.get('/user/:userId', async (req, res) => {
 router.post('/', async (req, res) => {
     // eslint-disable-next-line no-undef
     const email_user = process.env.EMAIL_USER;
-    // eslint-disable-next-line no-undef
-    const email_pass = process.env.EMAIL_PASS;
 
-    const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        // eslint-disable-next-line no-undef
-        user: email_user,
-        // eslint-disable-next-line no-undef
-        pass: email_pass,
-    },
-});
+    const transporter = createEmailTransporter();
 
     try {
         const { userId, subject, message, itemId } = req.body;

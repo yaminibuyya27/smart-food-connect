@@ -3,12 +3,21 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button } from '..
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShoppingBag, AlertCircle } from 'lucide-react';
 
 const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, updateCartQuantity, loading }) => {
+    const isCharityItem = (item) => {
+        return item.type === 'charity';
+    };
+
     const calculateTotal = () => {
-        return items.reduce((total, item) => total + (item.price * (item.cartQuantity || 1)), 0).toFixed(2);
+        return items.reduce((total, item) => {
+            // Charity items are free
+            const itemPrice = isCharityItem(item) ? 0 : item.price;
+            return total + (itemPrice * (item.cartQuantity || 1));
+        }, 0).toFixed(2);
     };
 
     const calculateItemTotal = (item) => {
-        return (item.price * (item.cartQuantity || 1)).toFixed(2);
+        const itemPrice = isCharityItem(item) ? 0 : item.price;
+        return (itemPrice * (item.cartQuantity || 1)).toFixed(2);
     };
 
     if (items.length === 0) {
@@ -135,10 +144,19 @@ const CartView = ({ items = [], setActiveView, removeFromCart, clearCart, update
                                             </div>
 
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm text-gray-600">Price:</span>
-                                                <span className="text-2xl font-bold text-green-600">
-                                                    ${calculateItemTotal(item)}
-                                                </span>
+                                                {isCharityItem(item) ? (
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-2xl font-bold text-green-600">FREE</span>
+                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">Charity Donation</span>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <span className="text-sm text-gray-600">Price:</span>
+                                                        <span className="text-2xl font-bold text-green-600">
+                                                            ${calculateItemTotal(item)}
+                                                        </span>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

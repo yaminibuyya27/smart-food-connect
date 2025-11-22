@@ -1,12 +1,13 @@
 import express from 'express';
 import OrderModel from '../models/order.js';
 import UserModel from '../models/user.js';
+import { sendOrderConfirmationEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { userId, items, totalAmount, paymentMethod, shippingAddress } = req.body;
+    const { userId, items, totalAmount, paymentMethod, shippingAddress, status } = req.body;
 
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -19,10 +20,18 @@ router.post('/', async (req, res) => {
       totalAmount,
       paymentMethod,
       shippingAddress,
-      status: 'pending'
+      status: status || 'completed' // Default to 'completed' if not provided
     });
 
     await order.save();
+
+    // Send order confirmation email
+    try {
+      await sendOrderConfirmationEmail(order, user.email, user.name);
+    } catch (emailError) {
+      console.error('Failed to send order confirmation email:', emailError);
+      // Don't fail the order creation if email fails
+    }
 
     res.status(201).json({
       message: 'Order created successfully',
